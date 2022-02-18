@@ -6,7 +6,7 @@ namespace gspark.Models
 {
     public class DtoUpdateUserAuth : IMapWith<UpdateUserCommand>
     {
-        public string Email { get; set; }
+        public string Email { get; set; } = "example@example.com";
         public string Password { get; set; }
 
         public void Mapping(Profile profile)

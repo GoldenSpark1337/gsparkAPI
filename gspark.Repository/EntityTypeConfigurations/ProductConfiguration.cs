@@ -9,7 +9,6 @@ namespace gspark.Domain.EntityTypeConfigurations
         public override void Configure(EntityTypeBuilder<Product> builder)
         {
             base.Configure(builder);
-            builder.ToTable(nameof(Product));
         }
     }
 }

@@ -8,6 +8,7 @@
     {
         public MarketPlaceContext(DbContextOptions<MarketPlaceContext> options) : base(options)
         {
+
 //#if DEBUG
 //            if (System.Diagnostics.Debugger.IsAttached == false)
 //            {
@@ -24,6 +25,7 @@
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseSnakeCaseNamingConvention();
             optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
         }

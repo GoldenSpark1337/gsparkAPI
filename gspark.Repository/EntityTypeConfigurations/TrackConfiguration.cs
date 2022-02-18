@@ -8,13 +8,12 @@
     {
         public override void Configure(EntityTypeBuilder<Track> builder)
         {
-            base.Configure(builder);
-            builder.ToTable(nameof(Track) + 's');
 
+            builder.HasKey(x => x.Id);
             builder.Property(track => track.Title).HasMaxLength(250).IsRequired();
             builder.Property(track => track.Bpm).HasMaxLength(4).IsRequired();
             builder.Property(track => track.SubGenre).HasMaxLength(25).IsRequired();
-            builder.Property(track => track.ReleaseDate).IsRequired().HasDefaultValueSql("GETDATE()");
+            //builder.Property(track => track.ReleaseDate).IsRequired().HasDefaultValueSql("GETDATE()");
             builder
                 .HasOne(track => track.User)
                 .WithMany(user => user.Tracks)
@@ -28,8 +27,7 @@
             builder
                 .HasOne(track => track.Key)
                 .WithOne(key => key.Track)
-                .HasForeignKey<Track>(track => track.KeyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey<Track>(track => track.TrackKey_Id);
         }
     }
 }

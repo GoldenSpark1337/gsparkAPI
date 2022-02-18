@@ -8,8 +8,6 @@
     {
         public override void Configure(EntityTypeBuilder<User> builder)
         {
-            base.Configure(builder);
-            builder.ToTable(nameof(User) + 's');
 
             
             builder.HasIndex(user => new { user.Id, user.Email }).IsUnique();

@@ -11,6 +11,9 @@ using gspark.Service.Common.Mappings;
 using gspark.Repository;
 using gspark.Service.Features.Users.Queries.GetUser;
 using gspark.Service.Features.Users.Commands.CreateUser;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -28,7 +31,7 @@ try
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
 
-
+    
     builder.Services.AddMediatR(typeof(GetUserQuery));
 
     builder.Services.AddValidatorsFromAssemblies(new [] { Assembly.GetAssembly(typeof(CreateUserCommandValidator)) });
@@ -48,7 +51,7 @@ try
     // Configure DbContext
     builder.Services.AddDbContext<MarketPlaceContext>(options =>
     {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql")).UseSnakeCaseNamingConvention();
     });
 
     // Enable Identity
@@ -60,6 +63,22 @@ try
         // Password settings
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 6;
+    });
+
+    //Enable Authentication
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+
     });
 
     // Enable CORS
@@ -92,9 +111,10 @@ try
     app.UseCors();
 
     // Use Authentication
-    //app.UseAuthentication();
+    app.UseAuthentication();
 
     // Use Authorization
+    app.UseAuthorization();
     //app.UseIdentityServer();
 
     // Use Swagger
@@ -111,8 +131,9 @@ try
         }
         catch (Exception ex)
         {
-            logger.Trace(ex.Message);
-            throw new Exception();
+            logger.Log(NLog.LogLevel.Trace, ex.Message);
+            logger.Error(ex, ex.Message);
+            throw new Exception(ex.Message);
         }
     }
 
@@ -126,7 +147,8 @@ try
 } 
 catch (Exception exception)
 {
-    logger.Trace(exception.Message);
+    logger.Log(NLog.LogLevel.Trace, exception.Message);
+
     throw;
 }
 finally

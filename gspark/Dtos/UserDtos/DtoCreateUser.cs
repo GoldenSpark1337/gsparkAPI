@@ -7,7 +7,7 @@
     public class DtoCreateUser : IMapWith<CreateUserCommand>
     {
         public string Username { get; set; }
-        public string Email { get; set; }
+        public string Email { get; set; } = "example@example.com";
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
 

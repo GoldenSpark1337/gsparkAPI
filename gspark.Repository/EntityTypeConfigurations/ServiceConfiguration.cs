@@ -9,7 +9,6 @@
         public override void Configure(EntityTypeBuilder<Service> builder)
         {
             base.Configure(builder);
-            builder.ToTable("Services");
 
             builder.Property(service => service.Title).HasMaxLength(250).IsRequired();
             builder.Property(service => service.Description).IsRequired();

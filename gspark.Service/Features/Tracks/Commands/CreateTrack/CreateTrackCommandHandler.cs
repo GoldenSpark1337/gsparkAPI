@@ -23,9 +23,10 @@
                 Title = request.Title,
                 ReleaseDate = request.ReleaseDate,
                 Bpm = request.Bpm,
-                Key = request.Key,
+    
+                //Key = request.Key,
                 Collaborator = request.Collaborator,
-                Genre = request.Genre,
+                //Genre = request.Genre,
                 SubGenre = request.SubGenre,
             };
 

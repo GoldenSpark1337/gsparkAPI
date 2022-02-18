@@ -9,7 +9,7 @@
         public void Configure(EntityTypeBuilder<TrackPlaylist> builder)
         {
             builder.HasKey(x => new { x.PlaylistId, x.TrackId });
-            builder.Property(x => x.CreatedAt).IsRequired().HasDefaultValue(DateTime.Now);
+            builder.Property(x => x.CreatedAt).IsRequired().HasDefaultValue(DateTime.UtcNow);
 
             builder
                 .HasOne<Playlist>(tp => tp.Playlist)

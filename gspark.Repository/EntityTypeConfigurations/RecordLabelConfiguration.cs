@@ -9,10 +9,9 @@
         public override void Configure(EntityTypeBuilder<RecordLabel> builder)
         {
             base.Configure(builder);
-            builder.ToTable("RecordLabel");
 
             builder.Property(label => label.Name).HasMaxLength(128).IsRequired();
-            builder.Property(label => label.CreatedAt).IsRequired().HasDefaultValue(DateTime.Now);
+            builder.Property(label => label.CreatedAt).IsRequired().HasDefaultValue(DateTime.UtcNow);
             builder.Property(label => label.Founder).IsRequired().HasMaxLength(50);
         }
     }

@@ -10,7 +10,6 @@ namespace gspark.Repository.EntityTypeConfigurations
         public override void Configure(EntityTypeBuilder<Subgenre> builder)
         {
             base.Configure(builder);
-            builder.ToTable(nameof(Subgenre) + 's');
 
             builder
                 .HasOne(subgenre => subgenre.Genre)

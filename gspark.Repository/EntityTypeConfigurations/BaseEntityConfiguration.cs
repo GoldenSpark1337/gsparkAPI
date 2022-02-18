@@ -9,7 +9,8 @@ namespace gspark.Domain.EntityTypeConfigurations
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.HasKey(key => key.Id);
+            //builder.HasKey(key => key.Id);
+            //builder.HasIndex(key => key.Id).IsUnique();
         }
     }
 }

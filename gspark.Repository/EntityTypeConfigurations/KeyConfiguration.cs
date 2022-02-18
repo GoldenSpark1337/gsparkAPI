@@ -8,9 +8,9 @@
     {
         public override void Configure(EntityTypeBuilder<Key> builder)
         {
-            base.Configure(builder);
-            builder.ToTable(nameof(Key));
-            builder.Property(key => key.TrackKey).IsRequired().HasMaxLength(3);
+            builder.HasKey(x => x.Id);
+            builder.HasIndex(key => key.Track_Key).IsUnique();
+            builder.Property(key => key.Track_Key).HasMaxLength(3);
         }
     }
 }

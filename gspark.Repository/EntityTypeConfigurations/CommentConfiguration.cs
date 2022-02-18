@@ -8,11 +8,10 @@ namespace gspark.Domain.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
-            builder.ToTable(nameof(Comment));
 
             builder.HasKey(x => new { x.UserId, x.TrackId });
 
-            builder.Property(comment => comment.CreatedAt).HasDefaultValueSql("GETDATE()");
+            //builder.Property(comment => comment.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder
                 .HasOne<User>(c => c.User)

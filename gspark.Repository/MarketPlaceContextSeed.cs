@@ -6,23 +6,23 @@
     {
         public async static void SeedAsync(MarketPlaceContext dbContext)
         {
-            await dbContext.Keys.AddRangeAsync
-            (
-                new Key { Id = 1, TrackKey = "A" },
-                new Key { Id = 2, TrackKey = "A#" },
-                new Key { Id = 3, TrackKey = "B" },
-                new Key { Id = 4, TrackKey = "C" },
-                new Key { Id = 5, TrackKey = "C#" },
-                new Key { Id = 6, TrackKey = "D" },
-                new Key { Id = 7, TrackKey = "D#" },
-                new Key { Id = 8, TrackKey = "E" },
-                new Key { Id = 9, TrackKey = "F" },
-                new Key { Id = 10, TrackKey = "F#" },
-                new Key { Id = 11, TrackKey = "G" },
-                new Key { Id = 12, TrackKey = "G#" }
-            );
+            //await dbContext.Keys.AddRangeAsync
+            //(
+            //    new TrackKey { Id = 1, Track_Key = "A" },
+            //    new TrackKey { Id = 2, Track_Key = "A#" },
+            //    new TrackKey { Id = 3, Track_Key = "B" },
+            //    new TrackKey { Id = 4, Track_Key = "C" },
+            //    new TrackKey { Id = 5, Track_Key = "C#" },
+            //    new TrackKey { Id = 6, Track_Key = "D" },
+            //    new TrackKey { Id = 7, Track_Key = "D#" },
+            //    new TrackKey { Id = 8, Track_Key = "E" },
+            //    new TrackKey { Id = 9, Track_Key = "F" },
+            //    new TrackKey { Id = 10, Track_Key = "F#" },
+            //    new TrackKey { Id = 11, Track_Key = "G" },
+            //    new TrackKey { Id = 12, Track_Key = "G#" }
+            //);
 
-            await dbContext.SaveChangesAsync();
+            //await dbContext.SaveChangesAsync();
         }
     }
 }

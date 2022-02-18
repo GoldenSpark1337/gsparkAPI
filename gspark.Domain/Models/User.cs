@@ -21,6 +21,6 @@ namespace gspark.Domain.Models
         public virtual ICollection<Kit> Kits { get; set; }
         public virtual ICollection<Playlist> Playlists { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
-        public virtual RecordLabel RecordLabel { get; set; }
+        public virtual RecordLabel? RecordLabel { get; set; }
     }
 }

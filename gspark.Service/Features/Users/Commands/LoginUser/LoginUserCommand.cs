@@ -5,7 +5,7 @@
 
     public class LoginUserCommand : IRequest<User>
     {
-        public string Email { get; set; }
+        public string Email { get; set; } = "example@example.com";
         public string Password { get; set; }
     }
 }

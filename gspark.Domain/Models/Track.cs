@@ -1,4 +1,6 @@
-﻿namespace gspark.Domain.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace gspark.Domain.Models
 {
     public class Track : BaseEntity
     {
@@ -7,8 +9,8 @@
         public byte[]? Artwork { get; set; }
         public DateTime ReleaseDate { get; set; } = DateTime.Now;
         public string Bpm { get; set; } = string.Empty;
-        public int KeyId { get; set; }
-        public string Collaborator { get; set; }
+        public int TrackKey_Id { get; set; }
+        public string Collaborator { get; set; } = string.Empty;
         public int GenreId { get; set; }
         public string SubGenre { get; set; } = string.Empty;
         public int Plays { get; set; } = 0;

@@ -9,7 +9,6 @@
         public override void Configure(EntityTypeBuilder<UploadedFile> builder)
         {
             base.Configure(builder);
-            builder.ToTable(nameof(UploadedFile) + 's');
             builder.Property(file => file.FileName).HasMaxLength(150).IsRequired();
             builder.Property(file => file.FileSize).IsRequired();
             builder.Property(file => file.UploadedDate).IsRequired();

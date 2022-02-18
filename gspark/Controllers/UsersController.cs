@@ -1,15 +1,16 @@
 ﻿#nullable disable
+using NLog;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using gspark.Models;
 using AutoMapper;
-using gspark.API.Dtos.UserDtos;
 using gspark.Service.Features.Users.Queries.GetAllUsers;
 using gspark.Service.Features.Users.Queries.GetUser;
 using gspark.Service.Features.Users.Commands.CreateUser;
 using gspark.Service.Features.Users.Commands.UpdateUser;
 using gspark.Service.Features.Users.Commands.UpdateUserInfo;
 using gspark.Service.Features.Users.Commands.DeleteUser;
+using Microsoft.AspNetCore.Authorization;
 
 namespace gspark.Controllers
 {
@@ -29,7 +30,7 @@ namespace gspark.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsersAsync(GetAllUsersQuery query, CancellationToken cts) => Ok(await _mediator.Send(query, cts));
+        public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetAllUsersQuery query, CancellationToken cts) => Ok(await _mediator.Send(query, cts));
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GetUserQuery>> GetUserAsync(int id, CancellationToken cts)
@@ -55,6 +56,7 @@ namespace gspark.Controllers
         public async Task<IActionResult> UpdateUserAuthAsync(int id,[FromBody] DtoUpdateUserAuth updateUserAuth, CancellationToken cts)
         {
             var command = _mapper.Map<UpdateUserCommand>(updateUserAuth);
+            
             return Ok(await _mediator.Send(command, cts));
         }
 
@@ -64,6 +66,7 @@ namespace gspark.Controllers
             return Ok(await _mediator.Send(updateUserInfo));
         }
 
+        [Authorize]
         [HttpPut("{id}/image")]
         public async Task<IActionResult> UpdateUserImageAsync(int id, [FromForm] IFormFile file)
         {

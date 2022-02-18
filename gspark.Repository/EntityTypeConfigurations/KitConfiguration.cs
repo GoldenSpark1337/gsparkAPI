@@ -9,7 +9,6 @@
         public override void Configure(EntityTypeBuilder<Kit> builder)
         {
             base.Configure(builder);
-            builder.ToTable(nameof(Kit));
 
             builder.Property(kit => kit.Title).HasMaxLength(100).IsRequired();
             builder

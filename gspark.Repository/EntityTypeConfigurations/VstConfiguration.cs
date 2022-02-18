@@ -10,7 +10,6 @@ namespace gspark.Repository.EntityTypeConfigurations
         public override void Configure(EntityTypeBuilder<Vst> builder)
         {
             base.Configure(builder);
-            builder.ToTable(nameof(Vst));
         }
     }
 }

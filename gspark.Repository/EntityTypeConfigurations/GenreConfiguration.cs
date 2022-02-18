@@ -9,7 +9,6 @@ namespace gspark.Domain.EntityTypeConfigurations
         public override void Configure(EntityTypeBuilder<Genre> builder)
         {
             base.Configure(builder);
-            builder.ToTable(nameof(Genre));
 
             
         }

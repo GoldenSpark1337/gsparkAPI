@@ -22,12 +22,12 @@
             
             if (entity == null || entity.Id != request.Id) throw new NotFoundException(nameof(entity), entity.Id);
 
-            entity.Title = request.Title;
-            entity.Artwork = request.ArtWork;
+            // entity.Title = request.Title;
+            // entity.Artwork = request.ArtWork;
             entity.Key = request.Key;
             entity.Bpm = request.Bpm;
             entity.Genre = request.Genre;
-            entity.SubGenre = request.SubGenre;
+            entity.SubGenreId = request.SubGenreId;
 
             await _context.SaveChangesAsync(cancellationToken);
 

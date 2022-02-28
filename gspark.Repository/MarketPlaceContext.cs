@@ -26,7 +26,7 @@
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSnakeCaseNamingConvention();
-            optionsBuilder.UseLazyLoadingProxies();
+            // optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -36,6 +36,8 @@
         public DbSet<RecordLabel> RecordLabels => Set<RecordLabel>();
         public DbSet<Kit> Kits => Set<Kit>();
         public DbSet<Service> Services => Set<Service>();
+        public DbSet<Product> Products => Set<Product>();
+        public DbSet<ProductType> ProductTypes => Set<ProductType>();
         public DbSet<Tag> Tags => Set<Tag>();
         public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<Vst> Vsts => Set<Vst>();

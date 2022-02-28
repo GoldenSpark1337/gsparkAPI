@@ -10,15 +10,15 @@
         {
 
             builder.HasKey(x => x.Id);
-            builder.Property(track => track.Title).HasMaxLength(250).IsRequired();
+            // builder.Property(track => track.Title).HasMaxLength(250).IsRequired();
             builder.Property(track => track.Bpm).HasMaxLength(4).IsRequired();
-            builder.Property(track => track.SubGenre).HasMaxLength(25).IsRequired();
-            //builder.Property(track => track.ReleaseDate).IsRequired().HasDefaultValueSql("GETDATE()");
-            builder
-                .HasOne(track => track.User)
-                .WithMany(user => user.Tracks)
-                .HasForeignKey(track => track.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(track => track.SubGenreId).IsRequired(false);
+            // builder.Property(track => track.ReleaseDate).IsRequired();
+            // builder
+            //     .HasOne(track => track.User)
+            //     .WithMany(user => user.Tracks)
+            //      .HasForeignKey(track => track.UserId)
+            //     .OnDelete(DeleteBehavior.Restrict);
             builder
                 .HasOne(track => track.Genre)
                 .WithMany(genre => genre.Tracks)
@@ -26,8 +26,9 @@
                 .OnDelete(DeleteBehavior.Cascade);
             builder
                 .HasOne(track => track.Key)
-                .WithOne(key => key.Track)
-                .HasForeignKey<Track>(track => track.TrackKey_Id);
+                .WithMany(key => key.Tracks)
+                .HasForeignKey(track => track.TrackKey_Id)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -11,11 +11,12 @@ using gspark.Service.Features.Users.Commands.UpdateUser;
 using gspark.Service.Features.Users.Commands.UpdateUserInfo;
 using gspark.Service.Features.Users.Commands.DeleteUser;
 using Microsoft.AspNetCore.Authorization;
+using gspark.Domain.Models;
 
 namespace gspark.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UsersController : Controller
     {
         private readonly IMediator _mediator;
@@ -56,7 +57,7 @@ namespace gspark.Controllers
         public async Task<IActionResult> UpdateUserAuthAsync(int id,[FromBody] DtoUpdateUserAuth updateUserAuth, CancellationToken cts)
         {
             var command = _mapper.Map<UpdateUserCommand>(updateUserAuth);
-            
+            command.Id = id;
             return Ok(await _mediator.Send(command, cts));
         }
 

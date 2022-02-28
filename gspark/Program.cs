@@ -14,6 +14,9 @@ using gspark.Service.Features.Users.Commands.CreateUser;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
+using gspark.Service.Contract;
+using gspark.Service.Implementation;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -24,7 +27,13 @@ try
 
     var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-    builder.Services.AddControllers();
+    builder.Services.AddScoped<ITrackRepository, TrackService>();
+    builder.Services.AddScoped<IGenreRepository, GenreService>();
+    builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+    
+    builder.Services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+        );
 
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders();
@@ -83,14 +92,12 @@ try
 
     // Enable CORS
     builder.Services.AddCors(options =>
-    {
+        {
         options.AddPolicy(
             name: myAllowSpecificOrigins,
-            builder => {
-                builder.WithOrigins("https://localhost:4200")
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-            });
+            builder => builder.WithOrigins("https://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader());
     });
 
     WebApplication app = builder.Build();
@@ -103,7 +110,8 @@ try
     app.UseHttpsRedirection();
 
     // Use Static Files
-
+    app.UseStaticFiles();
+    
     // Use Routing
     app.UseRouting();
 
@@ -128,6 +136,7 @@ try
         {
             var context = serviceProvider.GetRequiredService<MarketPlaceContext>();
             DbInitializer.Initialize(context);
+            await MarketPlaceContextSeed.SeedAsync(context, logger);
         }
         catch (Exception ex)
         {

@@ -9,7 +9,7 @@
 
     public class GetUserHandler : IRequestHandler<GetUserQuery, User>
     {
-        public MarketPlaceContext _context { get; }
+        private readonly MarketPlaceContext _context;
         public GetUserHandler(MarketPlaceContext context)
         {
             _context = context;

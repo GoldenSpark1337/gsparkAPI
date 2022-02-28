@@ -13,6 +13,6 @@
         public Key Key { get; set; }
         public string Collaborator { get; set; } = string.Empty;
         public Genre Genre { get; set; }
-        public string SubGenre { get; set; } = string.Empty;
+        public int SubGenreId { get; set; }
     }
 }

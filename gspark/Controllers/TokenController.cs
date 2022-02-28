@@ -69,7 +69,6 @@ namespace gspark.API.Controllers
         private async Task<User> GetUser(string email, string password)
         {
             var entity = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
-            if (entity == null) Console.WriteLine("ENitty nulllllllllllllllllllllllllllllll");
             return entity;
         }
     }

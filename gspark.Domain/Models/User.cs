@@ -16,6 +16,7 @@ namespace gspark.Domain.Models
         public int? RecordLabelId { get; set; }
 
         public virtual ICollection<Track> Tracks { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Service> Services { get; set; }
         public virtual ICollection<UploadedFile> UploadedFiles { get; set; }
         public virtual ICollection<Kit> Kits { get; set; }

@@ -9,6 +9,9 @@ namespace gspark.Domain.EntityTypeConfigurations
         public override void Configure(EntityTypeBuilder<Product> builder)
         {
             base.Configure(builder);
+
+            builder.Property(product => product.Title).HasMaxLength(100).IsRequired();
+            builder.Property(product => product.Description).HasMaxLength(500).IsRequired(false);
         }
     }
 }

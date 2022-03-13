@@ -4,7 +4,6 @@ using NLog;
 using NLog.Web;
 using Microsoft.AspNetCore.Identity;
 using FluentValidation;
-using gspark;
 using gspark.Domain.Identity;
 using gspark.Service.Common.Behaviors;
 using gspark.Service.Common.Mappings;
@@ -15,6 +14,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using gspark.API.Dtos.UserDtos;
+using gspark.Domain.Models;
+using gspark.Extensions;
+using gspark.Middleware;
+using gspark.Models;
 using gspark.Service.Contract;
 using gspark.Service.Implementation;
 
@@ -25,47 +29,50 @@ try
 {
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-    var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-    builder.Services.AddScoped<ITrackRepository, TrackService>();
-    builder.Services.AddScoped<IGenreRepository, GenreService>();
-    builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-    
+    // Add Controllers
     builder.Services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
         );
-
+    
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
 
-    
     builder.Services.AddMediatR(typeof(GetUserQuery));
 
     builder.Services.AddValidatorsFromAssemblies(new [] { Assembly.GetAssembly(typeof(CreateUserCommandValidator)) });
     builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+    // Enable AutoMapper
     builder.Services.AddAutoMapper(config =>
     {
         config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
         config.AddProfile(new AssemblyMappingProfile(typeof(MarketPlaceContext).Assembly));
     });
-
-    // Enable Swagger
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(
-        opt => opt.OperationFilter<SwaggerFileOperationFilter>());
+    builder.Services.AddTransient(typeof(UrlResolver<,>));
 
     // Configure DbContext
     builder.Services.AddDbContext<MarketPlaceContext>(options =>
     {
-        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql")).UseSnakeCaseNamingConvention();
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql"))
+            .UseSnakeCaseNamingConvention();
     });
 
-    // Enable Identity
-    builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-        .AddEntityFrameworkStores<MarketPlaceContext>();
+    builder.Services.AddDbContext<IdentityContext>(options =>
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"))
+            .UseSnakeCaseNamingConvention();
+    });
+    
+    // // Enable Identity
+    // builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    //     .AddEntityFrameworkStores<MarketPlaceContext>();
+    
+    // DI Services
+    builder.Services.AddApplicationServices();
+    builder.Services.AddIdentityServices(builder.Configuration);
+    builder.Services.AddSwaggerDocumentation();
 
     builder.Services.Configure<IdentityOptions>(options =>
     {
@@ -74,36 +81,21 @@ try
         options.Password.RequiredLength = 6;
     });
 
-    //Enable Authentication
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWT:Audience"],
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-
-    });
-
-    // Enable CORS
+    var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
     builder.Services.AddCors(options =>
-        {
+    {
         options.AddPolicy(
             name: myAllowSpecificOrigins,
-            builder => builder.WithOrigins("https://localhost:4200")
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            builder => builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://localhost:4200"));
     });
 
     WebApplication app = builder.Build();
-
+    
+    app.UseMiddleware<ExceptionMiddleware>();
+    
     // Use ExceptionHandler
-
+    app.UseStatusCodePagesWithReExecute("/errors/{0}");
+    
     //Use HSTS
 
     //Use HttpsRedirection
@@ -116,7 +108,7 @@ try
     app.UseRouting();
 
     // Use CORS
-    app.UseCors();
+    app.UseCors("_myAllowSpecificOrigins");
 
     // Use Authentication
     app.UseAuthentication();
@@ -126,8 +118,7 @@ try
     //app.UseIdentityServer();
 
     // Use Swagger
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerDocumentation();
 
     using (var scope = app.Services.CreateScope())
     {
@@ -137,6 +128,11 @@ try
             var context = serviceProvider.GetRequiredService<MarketPlaceContext>();
             DbInitializer.Initialize(context);
             await MarketPlaceContextSeed.SeedAsync(context, logger);
+
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var identityContext = serviceProvider.GetRequiredService<IdentityContext>();
+            await identityContext.Database.MigrateAsync();
+            await IdentityContextSeed.SeedUsersAsync(userManager);
         }
         catch (Exception ex)
         {

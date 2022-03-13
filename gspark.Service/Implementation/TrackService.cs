@@ -15,20 +15,20 @@ public class TrackService: ITrackRepository
         _context = context;
     }
     
-    public async Task<Track> GetTrackAsync(int id)
-    {
-        var entity = await _context.Tracks
-            .Include(t => t.User)
-            .FirstOrDefaultAsync(t => t.Id == id);
-        return entity ?? throw new NotFoundException(nameof(entity), id);
-    }
+    // public async Task<Track> GetTrackAsync(int id)
+    // {
+    //     var entity = await _context.Tracks
+    //         .Include(t => t.User)
+    //         .FirstOrDefaultAsync(t => t.Id == id);
+    //     return entity ?? throw new NotFoundException(nameof(entity), id);
+    // }
 
-    public async Task<IReadOnlyList<Track>> GetAllTracksAsync()
-    {
-        return await _context.Tracks
-            .Include(t => t.User)
-            .ToListAsync();
-    }
+    // public async Task<IReadOnlyList<Track>> GetAllTracksAsync()
+    // {
+    //     return await _context.Tracks
+    //         .Include(t => t.User)
+    //         .ToListAsync();
+    // }
 
     public async Task<int> AddTrack(Track track)
     {

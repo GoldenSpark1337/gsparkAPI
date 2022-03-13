@@ -10,8 +10,9 @@ namespace gspark.Domain.EntityTypeConfigurations
         {
             base.Configure(builder);
 
-            builder.Property(playlist => playlist.Name).IsRequired().HasMaxLength(100);
+            builder.Property(playlist => playlist.Name).IsRequired().HasMaxLength(100); // todo change to 60
             builder.Property(playlist => playlist.Artwork).IsRequired();
+            builder.Property(playlist => playlist.Description).HasMaxLength(500);
             builder
                 .HasOne(playlist => playlist.User)
                 .WithMany(user => user.Playlists)

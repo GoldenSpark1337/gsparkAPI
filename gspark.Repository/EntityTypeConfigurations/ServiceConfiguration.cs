@@ -10,12 +10,12 @@
         {
             base.Configure(builder);
 
-            builder.Property(service => service.Title).HasMaxLength(250).IsRequired();
-            builder.Property(service => service.Description).IsRequired();
-            builder.Property(service => service.Price).IsRequired();
-            builder.HasOne(service => service.User)
-                .WithMany(user => user.Services)
-                .HasForeignKey(service => service.UserId);
+            // builder.Property(service => service.Title).HasMaxLength(250).IsRequired();
+            // builder.Property(service => service.Description).IsRequired();
+            // builder.Property(service => service.Price).IsRequired();
+            // builder.HasOne(service => service.User)
+            //     .WithMany(user => user.Services)
+            //     .HasForeignKey(service => service.UserId);
 
 
         }

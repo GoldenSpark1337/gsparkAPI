@@ -10,7 +10,7 @@ namespace gspark.Domain.Models
         public string Password { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; } = "images/users/user_undefined.jpg";
         public string Location { get; set; } = string.Empty;
         public string Biography { get; set; } = string.Empty;
         public int? RecordLabelId { get; set; }

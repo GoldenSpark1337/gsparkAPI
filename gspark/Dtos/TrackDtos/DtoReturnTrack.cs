@@ -6,6 +6,7 @@ namespace gspark.Dtos.TrackDtos;
 
 public class DtoReturnTrack : IMapWith<Track>
 {
+    public int Id { get; set; }
     public string Title { get; set; }
     public string User { get; set; }
     public byte[]? Artwork { get; set; }
@@ -22,8 +23,8 @@ public class DtoReturnTrack : IMapWith<Track>
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Track, DtoReturnTrack>()
-            .ForMember(dto => dto.User,
-                opt => opt.MapFrom(t => t.User.Username))
+            // .ForMember(dto => dto.User,
+                // opt => opt.MapFrom(t => t.User.Username))
             .ForMember(dto => dto.Genre,
                 opt => opt.MapFrom(t => t.Genre.Name))
             .ForMember(dto => dto.Subgenre,

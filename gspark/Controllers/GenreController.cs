@@ -7,9 +7,7 @@ using NLog;
 
 namespace gspark.API.Controllers;
 
-[ApiController]
-[Route("api/genres")]
-public class GenreController : Controller
+public class GenreController : BaseController
 {
     private readonly IGenreRepository _repository;
     private readonly IMapper _mapper;

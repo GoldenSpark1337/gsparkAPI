@@ -36,23 +36,23 @@ namespace gspark.Repository
                     await dbContext.Subgenres.AddRangeAsync(
                         new Subgenre {Id = 1, Name = "Old School", GenreId = 1},
                         new Subgenre{Id = 2, Name = "Trap", GenreId = 1},
-                        new Subgenre {Id = 3, Name = "Club", GenreId = 1},
+                        new Subgenre{Id = 3, Name = "Club", GenreId = 1},
                         new Subgenre{Id = 4, Name = "East", GenreId = 1},
-                        new Subgenre {Id = 5, Name = "Underground", GenreId = 1},
+                        new Subgenre{Id = 5, Name = "Underground", GenreId = 1},
                         new Subgenre{Id = 6, Name = "Orchestral", GenreId = 1},
-                        new Subgenre {Id = 7, Name = "West", GenreId = 1},
+                        new Subgenre{Id = 7, Name = "West", GenreId = 1},
                         new Subgenre{Id = 8, Name = "Dirty South", GenreId = 1},
-                        new Subgenre {Id = 9, Name = "Soul", GenreId = 2},
+                        new Subgenre{Id = 9, Name = "Soul", GenreId = 2},
                         new Subgenre{Id = 10, Name = "Funk", GenreId = 2},
-                        new Subgenre {Id = 11, Name = "New Soul", GenreId = 2},
+                        new Subgenre{Id = 11, Name = "New Soul", GenreId = 2},
                         new Subgenre{Id = 12, Name = "K-Pop", GenreId = 3},
-                        new Subgenre {Id = 13, Name = "Indie", GenreId = 3},
+                        new Subgenre{Id = 13, Name = "Indie", GenreId = 3},
                         new Subgenre{Id = 14, Name = "DanceHall", GenreId = 3},
-                        new Subgenre {Id = 15, Name = "Hip-Hop", GenreId = 3},
+                        new Subgenre{Id = 15, Name = "Hip-Hop", GenreId = 3},
                         new Subgenre{Id = 16, Name = "Classic Rock", GenreId = 4},
-                        new Subgenre {Id = 17, Name = "Nu Metal", GenreId = 4},
+                        new Subgenre{Id = 17, Name = "Nu Metal", GenreId = 4},
                         new Subgenre{Id = 18, Name = "Alternative", GenreId = 4},
-                        new Subgenre {Id = 19, Name = "Emo", GenreId = 4},
+                        new Subgenre{Id = 19, Name = "Emo", GenreId = 4},
                         new Subgenre{Id = 20, Name = "Techno", GenreId = 5},
                         new Subgenre{Id = 21, Name = "House", GenreId = 5},
                         new Subgenre{Id = 22, Name = "DnB", GenreId = 5},
@@ -91,6 +91,16 @@ namespace gspark.Repository
                         new Genre {Id = 9, Name = "Kazakh"},
                         new Genre {Id = 10, Name = "Experimental"}
                     );
+                }
+
+                if (!dbContext.ProductTypes.Any())
+                {
+                    await dbContext.ProductTypes.AddRangeAsync(
+                        new ProductType {Id = 1, Name = "Tracks"},
+                        new ProductType {Id = 2, Name = "Kits"},
+                        new ProductType {Id = 3, Name = "Services"},
+                        new ProductType {Id = 4, Name = "Vsts"}
+                        );
                 }
                 
                 await dbContext.SaveChangesAsync();

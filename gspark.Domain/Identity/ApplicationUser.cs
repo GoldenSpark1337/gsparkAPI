@@ -4,6 +4,6 @@
 
     public class ApplicationUser : IdentityUser
     {
-        public string Username { get; set; }
+        public string DisplayName { get; set; }
     }
 }

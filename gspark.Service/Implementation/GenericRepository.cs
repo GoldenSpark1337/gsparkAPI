@@ -42,13 +42,27 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
     }
 
-    public Task<int> AddAsync(T entity)
+    public async Task<int> AddEntityAsync(T entity)
     {
-        throw new NotImplementedException();
+        await _context.Set<T>().AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entity.Id;
     }
 
-    public Task DeleteAsync(int id)
+    public async Task UpdateEntityAsync(int id)
     {
-        throw new NotImplementedException();
+        var entity = await _context.Set<T>().FindAsync(id);
+        if (entity == null || entity.Id != id) throw new NotFoundException(nameof(entity), id);
+        
     }
+
+    public async Task DeleteAsync(int id)
+    {
+        var entity = await _context.Set<T>().FindAsync(id);
+        if (entity == null || entity.Id != id) throw new NotFoundException(nameof(entity), id);
+        _context.Set<T>().Remove(entity);
+        await _context.SaveChangesAsync();
+    }
+    
+    
 }

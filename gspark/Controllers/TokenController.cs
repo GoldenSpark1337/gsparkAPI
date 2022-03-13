@@ -11,9 +11,7 @@ using System.Text;
 
 namespace gspark.API.Controllers
 {
-    [Route("api/token")]
-    [ApiController]
-    public class TokenController : ControllerBase
+    public class TokenController : BaseController
     {
         private readonly IConfiguration _configuration;
         private readonly MarketPlaceContext _context;

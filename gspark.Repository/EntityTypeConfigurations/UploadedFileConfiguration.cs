@@ -14,7 +14,7 @@
             builder.Property(file => file.UploadedDate).IsRequired();
             builder.HasOne(file => file.User)
                 .WithMany(user => user.UploadedFiles)
-                .HasForeignKey(file => file.UploadedBy)
+                .HasForeignKey(file => file.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

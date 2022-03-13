@@ -13,6 +13,7 @@
             // builder.Property(track => track.Title).HasMaxLength(250).IsRequired();
             builder.Property(track => track.Bpm).HasMaxLength(4).IsRequired();
             builder.Property(track => track.SubGenreId).IsRequired(false);
+            builder.Property(track => track.TrackKey_Id).IsRequired(false);
             // builder.Property(track => track.ReleaseDate).IsRequired();
             // builder
             //     .HasOne(track => track.User)

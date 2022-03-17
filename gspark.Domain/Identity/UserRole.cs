@@ -1,9 +1,10 @@
-﻿namespace gspark.Domain.Identity
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace gspark.Domain.Identity
 {
-    public class UserRole
+    public class UserRole : IdentityRole<int>
     {
-        public string Admin = "Admin";
-        public string Free = "Free";
-        public string ProPage = "Pro_Page";
+        
+        public virtual ICollection<AppUserRole> UserRoles { get; set; }
     }
 }

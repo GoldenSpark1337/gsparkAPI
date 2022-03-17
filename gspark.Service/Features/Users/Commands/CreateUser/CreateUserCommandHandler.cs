@@ -15,9 +15,9 @@
         {
             User user = new User
             {
-                Username = request.UserName,
+                UserName = request.UserName,
                 Email = request.Email,
-                Password = request.Password
+                PasswordHash = request.Password
             };
 
             await _context.Users.AddAsync(user, cancellationToken);

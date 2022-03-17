@@ -3,10 +3,11 @@ using gspark.Service.Features.Users.Queries.GetUser;
 
 namespace gspark.Service.Contract;
 
-public interface IUserService
+public interface IUserRepository
 { 
-    Task<User> GetUserByIdAsync(int id);
     Task<IReadOnlyList<User>> GetAllUsersAsync();
+    Task<User> GetUserByIdAsync(int id);
+    Task<User> GetUserByName(string username);
     Task<int> AddUser(User user);
     Task DeleteUser(int id);
 }

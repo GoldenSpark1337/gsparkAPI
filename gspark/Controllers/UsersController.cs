@@ -6,14 +6,12 @@ using gspark.Models;
 using AutoMapper;
 using gspark.API.Controllers;
 using gspark.API.Dtos.UserDtos;
-using gspark.Domain.Identity;
 using gspark.Service.Features.Users.Commands.UpdateUser;
 using gspark.Service.Features.Users.Commands.UpdateUserInfo;
 using gspark.Service.Features.Users.Commands.DeleteUser;
 using gspark.Domain.Models;
 using gspark.Service.Common.Exceptions;
 using gspark.Service.Contract;
-using gspark.Service.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -21,17 +19,17 @@ namespace gspark.Controllers
 {
     public class UsersController : BaseController
     {
-        private readonly IGenericRepository<User> _repo;
+        private readonly IUserRepository _repo;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly ILogger<UsersController> _logger;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly ITokenService _tokenService;
 
-        public UsersController(IGenericRepository<User> repo, IMediator mediator, 
+        public UsersController(IUserRepository repo, IMediator mediator, 
             IMapper mapper, ILogger<UsersController> logger,
-            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+            UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService)
         {
             _repo = repo;
@@ -42,16 +40,23 @@ namespace gspark.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
         }
-
+        
+        [Authorize(Policy = "AdminRole")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<DtoReturnUser>>> GetAllUsersAsync(CancellationToken cts)
         {
-            var spec = new UserIncludeSpecification();
-            var users = await _repo.ListAsync(spec);
+            var users = await _repo.GetAllUsersAsync();
             return Ok(_mapper.Map<IReadOnlyList<DtoReturnUser>>(users));
         }
 
-        [Authorize]
+        [HttpGet("musicians")]
+        public async Task<ActionResult<IReadOnlyList<DtoReturnMusician>>> GetAllMusicians()
+        {
+            var musicians = await _repo.GetAllUsersAsync();
+            return Ok(_mapper.Map<IReadOnlyList<DtoReturnMusician>>(musicians));
+        }
+
+        [Authorize(Roles = "Free, Admin")]
         [HttpGet("account")]
         public async Task<DtoUser> GetCurrentUser()
         {
@@ -60,33 +65,57 @@ namespace gspark.Controllers
                 .FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value;
             var user = await _userManager.FindByEmailAsync(email);
             var returnUser = _mapper.Map<DtoUser>(user);
-            returnUser.Token = _tokenService.CreateToken(user);
+            returnUser.Token = await _tokenService.CreateToken(user);
             return returnUser;
         }
         
         [HttpGet("emailexists")]
         public async Task<bool> CheckEmailExistsAsync([FromQuery]string email)
         {
-            return _userManager.FindByEmailAsync(email) != null;
+            return await _userManager.FindByEmailAsync(email) != null;
+        }
+
+        [HttpGet("usernameexists")]
+        public async Task<bool> CheckUsernameExistsAsync([FromQuery] string username)
+        {
+            return await _userManager.FindByNameAsync(username) != null;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<DtoReturnUser>> GetUserAsync(int id, CancellationToken cts)
         {
-            var spec = new UserIncludeSpecification(id);
-            var user = await _repo.GetEntityWithSpecification(spec);
+            var user = await _repo.GetUserByIdAsync(id);
+            return Ok(_mapper.Map<DtoReturnUser>(user));
+        }
+
+        [HttpGet("{username}")]
+        public async Task<ActionResult<DtoReturnUser>> GetUserByUsernameAsync(string username)
+        {
+            var user = await _repo.GetUserByName(username);
             return Ok(_mapper.Map<DtoReturnUser>(user));
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<DtoUser>> AddUserAsync(DtoCreateUser createUserDto, CancellationToken cts)
         {
-            var user = _mapper.Map<ApplicationUser>(createUserDto);
+            if (await CheckUsernameExistsAsync(createUserDto.Username))
+                return new BadRequestObjectResult(new ApiValidationErrorResponse
+                    {Errors = new[] {"Username is already taken"}});
+            
+            if (await CheckEmailExistsAsync(createUserDto.Email))
+                return new BadRequestObjectResult(new ApiValidationErrorResponse
+                    {Errors = new[] {"Email address is in use"}});
+            
+            var user = _mapper.Map<User>(createUserDto);
+            user.UserName = createUserDto.Username.ToLower();
             var result = await _userManager.CreateAsync(user, createUserDto.Password);
-            if (!result.Succeeded) return BadRequest(new ApiResponse(400));
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "Free");
+            if (!roleResult.Succeeded) return BadRequest(result.Errors);
             
             var returnUser = _mapper.Map<DtoUser>(user);
-            returnUser.Token = _tokenService.CreateToken(user);
+            returnUser.Token = await _tokenService.CreateToken(user);
             return returnUser;
         }
 
@@ -100,8 +129,14 @@ namespace gspark.Controllers
             if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
 
             var returnUser = _mapper.Map<DtoUser>(user);
-            returnUser.Token = _tokenService.CreateToken(user);
+            returnUser.Token = await _tokenService.CreateToken(user);
             return returnUser;
+        }
+
+        [HttpPost("")]
+        public async Task<IActionResult> AddFile(IFormFile file)
+        {
+            return Ok();
         }
 
         [HttpPatch]
@@ -115,6 +150,7 @@ namespace gspark.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserInfoAsync(int id,[FromBody] UpdateUserInfoCommand updateUserInfo)
         {
+            //TODO
             return Ok(await _mediator.Send(updateUserInfo));
         }
 

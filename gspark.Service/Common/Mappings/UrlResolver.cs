@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using AutoMapper;
 using gspark.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace gspark.Service.Common.Mappings;
 
-public class UrlResolver<T, V> : IValueResolver<T, V, string> where T : BaseEntity
+public class UrlResolver<T, V> : IValueResolver<T, V, string> where T :class
 {
     private readonly IConfiguration _configuration;
 

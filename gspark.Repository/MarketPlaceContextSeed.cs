@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using gspark.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NLog;
 using LogLevel = NLog.LogLevel;
 
@@ -8,7 +11,8 @@ namespace gspark.Repository
 
     public class MarketPlaceContextSeed
     {
-        public static async Task SeedAsync(MarketPlaceContext dbContext, Logger logger)
+        public static async Task SeedAsync(MarketPlaceContext dbContext, UserManager<User> userManager, 
+            RoleManager<UserRole> roleManager, Logger logger)
         {
             try
             {
@@ -102,6 +106,31 @@ namespace gspark.Repository
                         new ProductType {Id = 4, Name = "Vsts"}
                         );
                 }
+
+                var roles = new List<UserRole>()
+                {
+                    new UserRole {Name = "Free"},
+                    new UserRole {Name = "ProPage"},
+                    new UserRole {Name = "Admin"}
+                };
+
+                foreach (var role in roles)
+                {
+                    await roleManager.CreateAsync(role);
+                }
+
+                if (!(await userManager.Users.AnyAsync()))
+                {
+                    var user = new User()
+                    {
+                        UserName = "gspark",
+                        Email = "gspark1337@gmail.com",
+                    };
+                    await userManager.CreateAsync(user, "Nomad1984$$$");
+                    await userManager.AddToRoleAsync(user, "Admin");
+                }
+                
+                
                 
                 await dbContext.SaveChangesAsync();
             }

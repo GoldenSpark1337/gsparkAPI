@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using gspark.Domain.Identity;
+using gspark.Domain.Models;
 using gspark.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -11,11 +12,17 @@ public static class IdentityServiceExtensions
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
     {
-        var builder = services.AddIdentityCore<ApplicationUser>();
+        var builder = services.AddIdentityCore<User>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<UserRole>()
+            .AddRoleManager<RoleManager<UserRole>>()
+            .AddSignInManager<SignInManager<User>>()
+            .AddRoleValidator<RoleValidator<UserRole>>()
+            .AddEntityFrameworkStores<MarketPlaceContext>();
 
         builder = new IdentityBuilder(builder.UserType, builder.Services);
-        builder.AddEntityFrameworkStores<IdentityContext>();
-        builder.AddSignInManager<SignInManager<ApplicationUser>>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -30,7 +37,11 @@ public static class IdentityServiceExtensions
                 };
             });
         
-
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminRole", policy => policy.RequireRole("Admin"));
+        });
+        
         return services;
     }
 }

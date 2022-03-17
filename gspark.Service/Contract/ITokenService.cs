@@ -1,8 +1,8 @@
-﻿using gspark.Domain.Identity;
+﻿using gspark.Domain.Models;
 
 namespace gspark.Service.Contract;
 
 public interface ITokenService
 {
-    string CreateToken(ApplicationUser user);
+    Task<string> CreateToken(User user);
 }

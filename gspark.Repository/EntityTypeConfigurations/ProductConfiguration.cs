@@ -12,6 +12,11 @@ namespace gspark.Domain.EntityTypeConfigurations
 
             builder.Property(product => product.Title).HasMaxLength(100).IsRequired();
             builder.Property(product => product.Description).HasMaxLength(500).IsRequired(false);
+
+            builder
+                .HasOne(product => product.User)
+                .WithMany(user => user.Products)
+                .HasForeignKey(product => product.UserId);
         }
     }
 }

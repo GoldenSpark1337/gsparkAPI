@@ -1,4 +1,5 @@
-﻿using gspark.Service.Common.Exceptions;
+﻿using gspark.Repository;
+using gspark.Service.Common.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,12 @@ namespace gspark.API.Controllers;
 
 public class BuggyController : BaseController
 {
+    private readonly MarketPlaceContext _cont;
+
+    public BuggyController(MarketPlaceContext cont)
+    {
+        _cont = cont;
+    }
     [HttpGet("notfound")]
     public IActionResult GetNotFoundError()
     {
@@ -32,8 +39,10 @@ public class BuggyController : BaseController
     }
 
     [HttpGet("servererror")]
-    public ActionResult GetServerError()
+    public ActionResult<string> GetServerError()
     {
-        return Ok();
+        var xd = _cont.Products.FindAsync(-1);
+        var thingtoReturn = xd.ToString();
+        return thingtoReturn;
     }
 }

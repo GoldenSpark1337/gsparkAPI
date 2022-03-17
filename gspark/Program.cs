@@ -10,17 +10,10 @@ using gspark.Service.Common.Mappings;
 using gspark.Repository;
 using gspark.Service.Features.Users.Queries.GetUser;
 using gspark.Service.Features.Users.Commands.CreateUser;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using System.Text.Json.Serialization;
-using gspark.API.Dtos.UserDtos;
 using gspark.Domain.Models;
 using gspark.Extensions;
 using gspark.Middleware;
-using gspark.Models;
-using gspark.Service.Contract;
-using gspark.Service.Implementation;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -59,11 +52,11 @@ try
             .UseSnakeCaseNamingConvention();
     });
 
-    builder.Services.AddDbContext<IdentityContext>(options =>
-    {
-        options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"))
-            .UseSnakeCaseNamingConvention();
-    });
+    // builder.Services.AddDbContext<IdentityContext>(options =>
+    // {
+    //     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"))
+    //         .UseSnakeCaseNamingConvention();
+    // });
     
     // // Enable Identity
     // builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -74,12 +67,12 @@ try
     builder.Services.AddIdentityServices(builder.Configuration);
     builder.Services.AddSwaggerDocumentation();
 
-    builder.Services.Configure<IdentityOptions>(options =>
-    {
-        // Password settings
-        options.Password.RequireDigit = true;
-        options.Password.RequiredLength = 6;
-    });
+    // builder.Services.Configure<IdentityOptions>(options =>
+    // {
+    //     // Password settings
+    //     options.Password.RequireDigit = true;
+    //     options.Password.RequiredLength = 6;
+    // });
 
     var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
     builder.Services.AddCors(options =>
@@ -88,6 +81,9 @@ try
             name: myAllowSpecificOrigins,
             builder => builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("https://localhost:4200"));
     });
+    
+    // Enable Cloudinary service
+    builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
     WebApplication app = builder.Build();
     
@@ -127,12 +123,12 @@ try
         {
             var context = serviceProvider.GetRequiredService<MarketPlaceContext>();
             DbInitializer.Initialize(context);
-            await MarketPlaceContextSeed.SeedAsync(context, logger);
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<UserRole>>();
+            await MarketPlaceContextSeed.SeedAsync(context, userManager, roleManager, logger);
 
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var identityContext = serviceProvider.GetRequiredService<IdentityContext>();
-            await identityContext.Database.MigrateAsync();
-            await IdentityContextSeed.SeedUsersAsync(userManager);
+            // var identityContext = serviceProvider.GetRequiredService<IdentityContext>();
+            // await IdentityContextSeed.SeedUsersAsync(userManager);
         }
         catch (Exception ex)
         {

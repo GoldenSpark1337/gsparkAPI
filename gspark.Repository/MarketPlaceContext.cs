@@ -1,10 +1,16 @@
-﻿namespace gspark.Repository
+﻿using gspark.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+namespace gspark.Repository
 {
     using gspark.Domain.Models;
     using Microsoft.EntityFrameworkCore;
     using System.Reflection;
 
-    public class MarketPlaceContext : DbContext
+    public class MarketPlaceContext : IdentityDbContext<User, UserRole, int,
+    IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, 
+    IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public MarketPlaceContext(DbContextOptions<MarketPlaceContext> options) : base(options)
         {
@@ -19,8 +25,19 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>()
+                .HasMany(user => user.UserRoles)
+                .WithOne(ur => ur.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+            modelBuilder.Entity<UserRole>()
+                .HasMany(user => user.UserRoles)
+                .WithOne(ur => ur.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
+            
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -29,8 +46,7 @@
             // optionsBuilder.UseLazyLoadingProxies();
             base.OnConfiguring(optionsBuilder);
         }
-
-        public DbSet<User> Users => Set<User>();
+        
         public DbSet<Track> Tracks => Set<Track>();
         public DbSet<Playlist> Playlists => Set<Playlist>();
         public DbSet<RecordLabel> RecordLabels => Set<RecordLabel>();
@@ -44,6 +60,6 @@
         public DbSet<Genre> Genres => Set<Genre>();
         public DbSet<Subgenre> Subgenres => Set<Subgenre>();
         public DbSet<Key> Keys => Set<Key>();
-        public DbSet<UploadedFile> UploadedFiles => Set<UploadedFile>();
+        public DbSet<File> UploadedFiles => Set<File>();
     }
 }

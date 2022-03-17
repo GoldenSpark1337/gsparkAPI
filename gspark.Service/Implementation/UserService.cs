@@ -1,20 +1,37 @@
-﻿using gspark.Domain.Models;
+﻿using AutoMapper;
+using gspark.Domain.Models;
 using gspark.Repository;
 using gspark.Service.Common.Exceptions;
 using gspark.Service.Contract;
-using gspark.Service.Features.Users.Queries.GetUser;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace gspark.Service.Implementation;
 
-public class UserService: IUserService
+public class UserService: IUserRepository
 {
     private readonly MarketPlaceContext _context;
+    private readonly IMapper _mapper;
 
-    public UserService(MarketPlaceContext context)
+    public UserService(MarketPlaceContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
+    }
+    
+    public async Task<IReadOnlyList<User>> GetAllUsersAsync()
+    {
+        // return await _context.Users
+        //     .ProjectTo<DtoReturnUser>(_mapper.ConfigurationProvider)
+        //     .ToListAsync();
+        return await _context.Users
+            .Include(u => u.Products)
+            .Include(u => u.Tracks)
+            .Include(u => u.Kits)
+            .Include(u => u.Services)
+            .Include(u => u.RecordLabel)
+            .Include(u => u.Playlists)
+            .Include(u => u.Orders)
+            .ToListAsync();
     }
     
     public async Task<User> GetUserByIdAsync(int id)
@@ -30,16 +47,9 @@ public class UserService: IUserService
         return entity ?? throw new NotFoundException(nameof(entity), id);
     }
 
-    public async Task<IReadOnlyList<User>> GetAllUsersAsync()
+    public async Task<User> GetUserByName(string username)
     {
-        return await _context.Users
-            .Include(u => u.Tracks)
-            .Include(u => u.Kits)
-            .Include(u => u.Services)
-            .Include(u => u.RecordLabel)
-            .Include(u => u.Playlists)
-            .Include(u => u.Orders)
-            .ToListAsync();
+        return await _context.Users.SingleOrDefaultAsync(u => u.UserName == username) ?? throw new NotFoundException(username);
     }
 
     public async Task<int> AddUser(User user)
@@ -51,9 +61,9 @@ public class UserService: IUserService
 
     public async Task DeleteUser(int id)
     {
-        var entity = await _context.Tracks.FindAsync(id);
+        var entity = await _context.Users.FindAsync(id);
         if (entity == null) throw new NotFoundException(nameof(entity), entity.Id);
-        _context.Tracks.Remove(entity);
+        _context.Users.Remove(entity);
         await _context.SaveChangesAsync();
     }
 }

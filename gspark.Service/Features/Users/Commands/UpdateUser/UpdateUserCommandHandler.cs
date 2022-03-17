@@ -23,7 +23,7 @@
             }
 
             entity.Email = request.Email;
-            entity.Password = request.Password;
+            entity.PasswordHash = request.Password;
 
             await _context.SaveChangesAsync();
 

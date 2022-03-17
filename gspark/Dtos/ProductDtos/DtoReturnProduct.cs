@@ -25,6 +25,6 @@ public class DtoReturnProduct : IMapWith<Product>
             .ForMember(dto => dto.ProductType, 
                 opt => opt.MapFrom(p => p.ProductType.Name))
             .ForMember(dto => dto.User, 
-                opt => opt.MapFrom(p => p.User.Username));
+                opt => opt.MapFrom(p => p.User.UserName));
     }
 }

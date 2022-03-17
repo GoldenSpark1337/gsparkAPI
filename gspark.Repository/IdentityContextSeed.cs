@@ -1,17 +1,16 @@
-﻿using gspark.Domain.Identity;
+﻿using gspark.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace gspark.Repository;
 
 public class IdentityContextSeed
 {
-    public static async Task SeedUsersAsync(UserManager<ApplicationUser> userManager)
+    public static async Task SeedUsersAsync(UserManager<User> userManager)
     {
         if (!userManager.Users.Any())
         {
-            var user = new ApplicationUser
+            var user = new User
             {
-                DisplayName = "bob",
                 UserName = "bob",
                 Email = "bob@example.pl"
             };

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using gspark.Domain.Models;
-using gspark.Dtos.ProductDtos;
+using gspark.Dtos.TrackDtos;
 using gspark.Service.Contract;
+using gspark.Service.Dtos.ProductDtos;
+using gspark.Service.Dtos.UserDtos;
 using gspark.Service.Specification;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +25,22 @@ public class ProductController : BaseController
     public async Task<ActionResult<IReadOnlyList<DtoReturnProduct>>> GetAllProducts([FromQuery] ProductSpecParams productParams)
     {
         var spec = new ProductWithSpecification(productParams);
+        var entities = await _repo.ListAsync(spec);
+        return Ok(_mapper.Map<IReadOnlyList<DtoReturnProduct>>(entities));
+    }
+
+    [HttpGet("tracks")]
+    public async Task<ActionResult<IReadOnlyList<DtoReturnTrack>>> GetAllTracks()
+    {
+        var spec = new ProductWithSpecification(new ProductSpecParams {Category = "Tracks"} );
+        var entities = await _repo.ListAsync(spec);
+        return Ok(_mapper.Map<IReadOnlyList<DtoReturnTrack>>(entities));
+    }
+    
+    [HttpGet("services")]
+    public async Task<ActionResult<IReadOnlyList<DtoReturnProduct>>> GetAllServices()
+    {
+        var spec = new ProductWithSpecification(new ProductSpecParams {Category = "Services"} );
         var entities = await _repo.ListAsync(spec);
         return Ok(_mapper.Map<IReadOnlyList<DtoReturnProduct>>(entities));
     }
@@ -63,6 +81,7 @@ public class ProductController : BaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        return Ok(_repo.DeleteAsync(id));
+        _repo.DeleteAsync(id);
+        return NoContent();
     }
 }

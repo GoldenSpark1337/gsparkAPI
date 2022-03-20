@@ -1,4 +1,6 @@
-﻿namespace gspark.Dtos.FileDtos;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace gspark.Service.Dtos.FileDtos;
 
 public class DtoCreateImage
 {

@@ -2,7 +2,7 @@
 using gspark.Domain.Models;
 using gspark.Service.Common.Mappings;
 
-namespace gspark.Dtos.GenreDtos;
+namespace gspark.Service.Dtos.GenreDtos;
 
 public class DtoCreateGenre : IMapWith<Genre>
 {

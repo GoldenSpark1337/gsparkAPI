@@ -10,6 +10,7 @@ namespace gspark.Repository.EntityTypeConfigurations
         public override void Configure(EntityTypeBuilder<Tag> builder)
         {
             base.Configure(builder);
+            builder.Property(t => t.TagName).HasMaxLength(30).IsRequired();
         }
     }
 }

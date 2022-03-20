@@ -2,7 +2,7 @@
 using gspark.Service.Common.Mappings;
 using gspark.Service.Features.Users.Commands.UpdateUser;
 
-namespace gspark.Models
+namespace gspark.Service.Dtos.UserDtos
 {
     public class DtoUpdateUserAuth : IMapWith<UpdateUserCommand>
     {

@@ -8,15 +8,15 @@ public class UserIncludeSpecification : BaseSpecification<User>
     {
         AddInclude(u => u.RecordLabel);
         AddInclude(u => u.Playlists);
-        AddInclude(u => u.Kits);
-        AddInclude(u => u.Services);
+        // AddInclude(u => u.Kits);
+        // AddInclude(u => u.Services);
     }
 
     public UserIncludeSpecification(int id) : base(u => u.Id == id)
     {
         AddInclude(u => u.RecordLabel);
         AddInclude(u => u.Playlists);
-        AddInclude(u => u.Kits);
-        AddInclude(u => u.Services);
+        // AddInclude(u => u.Kits);
+        // AddInclude(u => u.Services);
     }
 }

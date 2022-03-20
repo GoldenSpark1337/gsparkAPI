@@ -12,6 +12,8 @@ public class VstController : BaseController
     {
         _repo = repo;
     }
+    
+    
 
     [HttpPost]
     public async Task<IActionResult> AddVst([FromBody] Vst entity)

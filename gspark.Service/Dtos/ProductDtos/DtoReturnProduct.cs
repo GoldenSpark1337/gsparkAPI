@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using gspark.Domain.Models;
 using gspark.Service.Common.Mappings;
+using gspark.Service.Dtos.UserDtos;
 
-namespace gspark.Dtos.ProductDtos;
+namespace gspark.Service.Dtos.ProductDtos;
 
 public class DtoReturnProduct : IMapWith<Product>
 {
@@ -20,8 +21,9 @@ public class DtoReturnProduct : IMapWith<Product>
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Product, DtoReturnProduct>()
-            .ForMember(dto => dto.Image, 
-                opt => opt.MapFrom<UrlResolver<Product, DtoReturnProduct>>())
+            .ForMember(dto => dto.Image,
+                opt => opt.MapFrom(p => 
+                    string.Format("{0}{1}", "http://localhost:5057/", p.User.Image)))
             .ForMember(dto => dto.ProductType, 
                 opt => opt.MapFrom(p => p.ProductType.Name))
             .ForMember(dto => dto.User, 

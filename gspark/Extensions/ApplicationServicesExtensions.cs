@@ -1,4 +1,6 @@
-﻿using gspark.Service.Common.Exceptions;
+﻿using gspark.Repository;
+using gspark.Service.Common.Exceptions;
+using gspark.Service.Common.Mappings;
 using gspark.Service.Contract;
 using gspark.Service.Implementation;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +15,17 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IUserRepository, UserService>();
         services.AddScoped<IGenreRepository, GenreService>();
+        services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        
+        // Enable AutoMapper
+        services.AddAutoMapper(config =>
+        {
+            config.AddProfile(new AssemblyMappingProfile(typeof(AssemblyMappingProfile).Assembly));
+            config.AddProfile(new AssemblyMappingProfile(typeof(MarketPlaceContext).Assembly));
+        });
+        services.AddTransient(typeof(UrlResolver<,>));
+        
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = actionContext =>

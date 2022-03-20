@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using gspark.Domain.Models;
 using gspark.Repository;
 using gspark.Service.Common.Exceptions;
 using gspark.Service.Contract;
+using gspark.Service.Dtos.UserDtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace gspark.Service.Implementation;
@@ -20,36 +22,31 @@ public class UserService: IUserRepository
     
     public async Task<IReadOnlyList<User>> GetAllUsersAsync()
     {
-        // return await _context.Users
-        //     .ProjectTo<DtoReturnUser>(_mapper.ConfigurationProvider)
-        //     .ToListAsync();
         return await _context.Users
-            .Include(u => u.Products)
-            .Include(u => u.Tracks)
-            .Include(u => u.Kits)
-            .Include(u => u.Services)
+            .Include(u => u.Products).ThenInclude(p => p.ProductType)
+            // .Include(u => u.Tracks)
+            // .Include(u => u.Kits)
+            // .Include(u => u.Services)
             .Include(u => u.RecordLabel)
             .Include(u => u.Playlists)
             .Include(u => u.Orders)
             .ToListAsync();
     }
     
-    public async Task<User> GetUserByIdAsync(int id)
-    {
-        var entity = await _context.Users
-            .Include(u => u.Tracks)
-            .Include(u => u.Kits)
-            .Include(u => u.Services)
-            .Include(u => u.RecordLabel)
-            .Include(u => u.Playlists)
-            .Include(u => u.Orders)
-            .FirstOrDefaultAsync(u => u.Id == id);
-        return entity ?? throw new NotFoundException(nameof(entity), id);
-    }
+    // public async Task<DtoReturnMusician> GetUserByIdAsync(int id)
+    // {
+    //     return await _context.Users
+    //         .Where(u => u.Id == id)
+    //         .ProjectTo<DtoReturnMusician>(_mapper.ConfigurationProvider)
+    //         .SingleOrDefaultAsync() ?? throw new NotFoundException(nameof(User), id);
+    // }
 
-    public async Task<User> GetUserByName(string username)
+    public async Task<DtoReturnMusician> GetUserByName(string username)
     {
-        return await _context.Users.SingleOrDefaultAsync(u => u.UserName == username) ?? throw new NotFoundException(username);
+        return await _context.Users
+            .Where(u => u.UserName == username)
+            .ProjectTo<DtoReturnMusician>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync() ?? throw new NotFoundException(username);
     }
 
     public async Task<int> AddUser(User user)

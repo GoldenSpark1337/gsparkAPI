@@ -2,10 +2,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using gspark.Models;
 using AutoMapper;
 using gspark.API.Controllers;
-using gspark.API.Dtos.UserDtos;
+using gspark.Service.Dtos.UserDtos;
 using gspark.Service.Features.Users.Commands.UpdateUser;
 using gspark.Service.Features.Users.Commands.UpdateUserInfo;
 using gspark.Service.Features.Users.Commands.DeleteUser;
@@ -27,9 +26,13 @@ namespace gspark.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly ITokenService _tokenService;
 
-        public UsersController(IUserRepository repo, IMediator mediator, 
-            IMapper mapper, ILogger<UsersController> logger,
-            UserManager<User> userManager, SignInManager<User> signInManager,
+        public UsersController(
+            IUserRepository repo, 
+            IMediator mediator, 
+            IMapper mapper, 
+            ILogger<UsersController> logger,
+            UserManager<User> userManager, 
+            SignInManager<User> signInManager,
             ITokenService tokenService)
         {
             _repo = repo;
@@ -52,8 +55,8 @@ namespace gspark.Controllers
         [HttpGet("musicians")]
         public async Task<ActionResult<IReadOnlyList<DtoReturnMusician>>> GetAllMusicians()
         {
-            var musicians = await _repo.GetAllUsersAsync();
-            return Ok(_mapper.Map<IReadOnlyList<DtoReturnMusician>>(musicians));
+            var users = await _repo.GetAllUsersAsync();
+            return Ok(_mapper.Map<IReadOnlyList<DtoReturnMusician>>(users));
         }
 
         [Authorize(Roles = "Free, Admin")]
@@ -81,18 +84,11 @@ namespace gspark.Controllers
             return await _userManager.FindByNameAsync(username) != null;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DtoReturnUser>> GetUserAsync(int id, CancellationToken cts)
-        {
-            var user = await _repo.GetUserByIdAsync(id);
-            return Ok(_mapper.Map<DtoReturnUser>(user));
-        }
-
         [HttpGet("{username}")]
-        public async Task<ActionResult<DtoReturnUser>> GetUserByUsernameAsync(string username)
+        public async Task<ActionResult<DtoReturnMusician>> GetUserByUsernameAsync(string username)
         {
             var user = await _repo.GetUserByName(username);
-            return Ok(_mapper.Map<DtoReturnUser>(user));
+            return Ok(_mapper.Map<DtoReturnMusician>(user));
         }
 
         [HttpPost("register")]

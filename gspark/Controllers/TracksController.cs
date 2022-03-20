@@ -53,7 +53,8 @@ public class TracksController : BaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTrack(int id)
     {
-        return Ok(_repo.DeleteAsync(id));
+        _repo.DeleteAsync(id);
+        return NoContent();
     }
     
 }

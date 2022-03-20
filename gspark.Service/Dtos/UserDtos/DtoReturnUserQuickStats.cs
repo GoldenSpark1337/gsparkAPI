@@ -2,7 +2,7 @@
 using gspark.Domain.Models;
 using gspark.Service.Common.Mappings;
 
-namespace gspark.Dtos.ProductDtos;
+namespace gspark.Service.Dtos.UserDtos;
 
 public class DtoReturnUserQuickStats : IMapWith<Product>
 {

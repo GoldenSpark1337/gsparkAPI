@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using gspark.Domain.Models;
-using gspark.Dtos.GenreDtos;
 using gspark.Service.Contract;
+using gspark.Service.Dtos.GenreDtos;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 

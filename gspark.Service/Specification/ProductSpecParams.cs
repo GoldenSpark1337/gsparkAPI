@@ -11,6 +11,7 @@ public class ProductSpecParams
     public int? KeyId { get; set; }
     public double minBpm { get; set; } = 0;
     public double maxBpm { get; set; } = 250;
+    public string? Tags { get; set; }
     private string _search;
 
     public string? Search

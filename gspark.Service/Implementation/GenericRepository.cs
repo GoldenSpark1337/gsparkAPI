@@ -56,12 +56,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         
     }
 
-    public async Task DeleteAsync(int id)
+    public void DeleteAsync(int id)
     {
-        var entity = await _context.Set<T>().FindAsync(id);
+        var entity = _context.Set<T>().Find(id);
         if (entity == null || entity.Id != id) throw new NotFoundException(nameof(entity), id);
         _context.Set<T>().Remove(entity);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
     }
     
     

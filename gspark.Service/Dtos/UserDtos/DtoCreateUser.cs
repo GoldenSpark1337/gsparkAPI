@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using gspark.Domain.Models;
+using gspark.Service.Common.Mappings;
 
-namespace gspark.Models
+namespace gspark.Service.Dtos.UserDtos
 {
-    using AutoMapper;
-    using gspark.Service.Common.Mappings;
-    using gspark.Service.Features.Users.Commands.CreateUser;
-
     public class DtoCreateUser : IMapWith<User>
     {
         [Required]

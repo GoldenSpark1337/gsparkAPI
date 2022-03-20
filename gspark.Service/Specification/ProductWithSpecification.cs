@@ -21,14 +21,14 @@ public class ProductWithSpecification : BaseSpecification<Product>
         : base(p =>
             (string.IsNullOrEmpty(productParams.Category) || p.ProductType.Name.ToLower() == productParams.Category.ToLower()) &&
             (string.IsNullOrEmpty(productParams.Search) || (p.Title.ToLower().Contains(productParams.Search))) &&
-            (p.Price > (decimal)productParams.minPrice && p.Price < (decimal)productParams.maxPrice) &&
+            (p.Price > (decimal)productParams.minPrice && p.Price < (decimal)productParams.maxPrice)
             
-            ((!productParams.KeyId.HasValue && productParams.Category != "Tracks") 
-             || p.Tracks.TrackKey_Id == productParams.KeyId) &&
+            // ((!productParams.KeyId.HasValue && productParams.Category != "Tracks") 
+            //  || p.Tracks.TrackKey_Id == productParams.KeyId) &&
             
-            (productParams.Category != "Tracks") 
-                || (Convert.ToInt16(p.Tracks.Bpm) > (int)productParams.minBpm 
-                    && Convert.ToInt16(p.Tracks.Bpm) < (int)productParams.maxBpm)
+            // (productParams.Category != "Tracks") 
+            //     || (Convert.ToInt16(p.Tracks.Bpm) > (int)productParams.minBpm 
+            //         && Convert.ToInt16(p.Tracks.Bpm) < (int)productParams.maxBpm)
         )
     {
         AddInclude(p => p.User);

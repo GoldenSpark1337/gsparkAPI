@@ -11,6 +11,7 @@
     <PackageReference Include="CloudinaryDotNet" Version="1.17.0" />
     <PackageReference Include="FluentValidation" Version="10.3.6" />
     <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.5.43" />
   </ItemGroup>
 
   <ItemGroup>

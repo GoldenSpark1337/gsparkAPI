@@ -6,7 +6,7 @@ public class TrackWithUsersSpecification : BaseSpecification<Track>
 {
     public TrackWithUsersSpecification()
     {
-        // AddInclude(track => track.User);
+        AddInclude(track => track.User);
         AddInclude(track => track.Genre);
         AddInclude(track => track.Subgenre);
         AddInclude(track => track.Key);
@@ -14,7 +14,7 @@ public class TrackWithUsersSpecification : BaseSpecification<Track>
 
     public TrackWithUsersSpecification(int id) : base(t => t.Id == id)
     {
-        // AddInclude(track => track.User);
+        AddInclude(track => track.User);
         AddInclude(track => track.Genre);
         AddInclude(track => track.Subgenre);
         AddInclude(track => track.Key);
@@ -30,7 +30,7 @@ public class TrackWithUsersSpecification : BaseSpecification<Track>
             // (Convert.ToInt16(t.Bpm) > (int)trackParams.minBpm && Convert.ToInt16(t.Bpm) < (int)trackParams.maxBpm)
         )
     {
-        // AddInclude(track => track.User);
+        AddInclude(track => track.User);
         AddInclude(track => track.Genre);
         AddInclude(track => track.Subgenre);
         AddInclude(track => track.Key);

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using FluentValidation;
 using gspark.Domain.Identity;
 using gspark.Service.Common.Behaviors;
-using gspark.Service.Common.Mappings;
 using gspark.Repository;
 using gspark.Service.Features.Users.Queries.GetUser;
 using gspark.Service.Features.Users.Commands.CreateUser;
@@ -14,6 +13,7 @@ using System.Text.Json.Serialization;
 using gspark.Domain.Models;
 using gspark.Extensions;
 using gspark.Middleware;
+using StackExchange.Redis;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -37,42 +37,25 @@ try
     builder.Services.AddValidatorsFromAssemblies(new [] { Assembly.GetAssembly(typeof(CreateUserCommandValidator)) });
     builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-    // Enable AutoMapper
-    builder.Services.AddAutoMapper(config =>
-    {
-        config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
-        config.AddProfile(new AssemblyMappingProfile(typeof(MarketPlaceContext).Assembly));
-    });
-    builder.Services.AddTransient(typeof(UrlResolver<,>));
-
     // Configure DbContext
     builder.Services.AddDbContext<MarketPlaceContext>(options =>
     {
         options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql"))
             .UseSnakeCaseNamingConvention();
     });
-
-    // builder.Services.AddDbContext<IdentityContext>(options =>
-    // {
-    //     options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"))
-    //         .UseSnakeCaseNamingConvention();
-    // });
     
-    // // Enable Identity
-    // builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    //     .AddEntityFrameworkStores<MarketPlaceContext>();
+    // Configure Redis
+    builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
+    {
+        var config = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"),
+            true);
+        return ConnectionMultiplexer.Connect(config);
+    });
     
     // DI Services
     builder.Services.AddApplicationServices();
     builder.Services.AddIdentityServices(builder.Configuration);
     builder.Services.AddSwaggerDocumentation();
-
-    // builder.Services.Configure<IdentityOptions>(options =>
-    // {
-    //     // Password settings
-    //     options.Password.RequireDigit = true;
-    //     options.Password.RequiredLength = 6;
-    // });
 
     var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
     builder.Services.AddCors(options =>

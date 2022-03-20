@@ -3,7 +3,7 @@ using gspark.Domain.Models;
 using gspark.Dtos.TrackDtos;
 using gspark.Service.Common.Mappings;
 
-namespace gspark.API.Dtos.UserDtos;
+namespace gspark.Service.Dtos.UserDtos;
 
 public class DtoReturnUser : IMapWith<User>
 {
@@ -32,12 +32,12 @@ public class DtoReturnUser : IMapWith<User>
             .ForMember(dto => dto.RecordLabel,
                 opt => opt.MapFrom(u => u.RecordLabel.Name))
             .ForMember(dto => dto.Playlists,
-                opt => opt.MapFrom(u => u.Playlists))
-            .ForMember(dto => dto.Tracks,
-                opt => opt.MapFrom(u => u.Tracks))
-            .ForMember(dto => dto.Kits,
-                opt => opt.MapFrom(u => u.Kits))
-            .ForMember(dto => dto.Services,
-                opt => opt.MapFrom(u => u.Services));
+                opt => opt.MapFrom(u => u.Playlists));
+        // .ForMember(dto => dto.Tracks,
+        //     opt => opt.MapFrom(u => u.Tracks))
+        // .ForMember(dto => dto.Kits,
+        //     opt => opt.MapFrom(u => u.Kits))
+        // .ForMember(dto => dto.Services,
+        //     opt => opt.MapFrom(u => u.Services));
     }
 }

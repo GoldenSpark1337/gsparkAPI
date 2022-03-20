@@ -2,14 +2,8 @@
 
 namespace gspark.Domain.Models
 {
-    public class Track : BaseEntity
+    public class Track : Product
     {
-        // public string Title { get; set; } = string.Empty;
-        // public int UserId { get; set; }
-        // public virtual User User { get; set; }
-        // public byte[]? Artwork { get; set; }
-        // public decimal Price { get; set; }
-        // public DateTime ReleaseDate { get; set; } = DateTime.Now.Date;
         public string Mp3File { get; set; }
         public string? WavFile { get; set; }
         public string Bpm { get; set; } = string.Empty;
@@ -19,7 +13,6 @@ namespace gspark.Domain.Models
         public virtual Genre Genre { get; set; }
         public int? SubGenreId { get; set; }
         public virtual Subgenre Subgenre { get; set; }
-        public int? KeyId { get; set; }
         public virtual Key Key { get; set; }
         public int Plays { get; set; } = 0;
         public int Likes { get; set; } = 0;

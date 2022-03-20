@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using gspark.Models;
 
-namespace gspark.API.Dtos.UserDtos
+namespace gspark.Service.Dtos.UserDtos
 {
     public class DtoLoginUser
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; } = "example@example.com";
+        public string Email { get; set; }
         
         public string Password { get; set; }
     }

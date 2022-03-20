@@ -18,10 +18,7 @@ namespace gspark.Domain.Models
         
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<File> Files { get; set; }
-        public virtual ICollection<Track> Tracks { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<Service> Services { get; set; }
-        public virtual ICollection<Kit> Kits { get; set; }
         public virtual ICollection<Playlist> Playlists { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual RecordLabel? RecordLabel { get; set; }

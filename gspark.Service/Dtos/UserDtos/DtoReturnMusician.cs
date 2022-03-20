@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using gspark.Domain.Models;
-using gspark.Dtos.ProductDtos;
 using gspark.Dtos.TrackDtos;
 using gspark.Service.Common.Mappings;
+using gspark.Service.Dtos.ProductDtos;
 
-namespace gspark.API.Dtos.UserDtos;
+namespace gspark.Service.Dtos.UserDtos;
 
 public class DtoReturnMusician : IMapWith<User>
 {
@@ -31,12 +31,12 @@ public class DtoReturnMusician : IMapWith<User>
                 opt => opt.MapFrom(u => u.RecordLabel.Name))
             .ForMember(dto => dto.Playlists,
                 opt => opt.MapFrom(u => u.Playlists))
-            .ForMember(dto => dto.Tracks,
-                opt => opt.MapFrom(u => u.Tracks))
-            .ForMember(dto => dto.Kits,
-                opt => opt.MapFrom(u => u.Kits))
-            .ForMember(dto => dto.Services,
-                opt => opt.MapFrom(u => u.Services))
+            // .ForMember(dto => dto.Tracks,
+            //     opt => opt.MapFrom(u => u.Tracks))
+            // .ForMember(dto => dto.Kits,
+            //     opt => opt.MapFrom(u => u.Kits))
+            // .ForMember(dto => dto.Services,
+            //     opt => opt.MapFrom(u => u.Services))
             .ForMember(dto => dto.Products,
                 opt => opt.MapFrom(u => u.Products));
     }

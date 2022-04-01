@@ -9,8 +9,6 @@
         public override void Configure(EntityTypeBuilder<File> builder)
         {
             base.Configure(builder);
-            builder.Property(file => file.FileName).HasMaxLength(150).IsRequired();
-            builder.Property(file => file.FileSize).IsRequired();
             builder.Property(file => file.CreatedAt).IsRequired();
 
             builder

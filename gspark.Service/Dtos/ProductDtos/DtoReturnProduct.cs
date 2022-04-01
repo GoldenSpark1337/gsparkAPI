@@ -22,8 +22,7 @@ public class DtoReturnProduct : IMapWith<Product>
     {
         profile.CreateMap<Product, DtoReturnProduct>()
             .ForMember(dto => dto.Image,
-                opt => opt.MapFrom(p => 
-                    string.Format("{0}{1}", "http://localhost:5057/", p.User.Image)))
+                opt => opt.MapFrom(p => p.User.Image))
             .ForMember(dto => dto.ProductType, 
                 opt => opt.MapFrom(p => p.ProductType.Name))
             .ForMember(dto => dto.User, 

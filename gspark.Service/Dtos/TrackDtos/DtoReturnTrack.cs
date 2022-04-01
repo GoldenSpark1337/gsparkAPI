@@ -9,7 +9,7 @@ public class DtoReturnTrack : IMapWith<Product>
     public int Id { get; set; }
     public string Title { get; set; }
     public string Image { get; set; }
-    public byte[]? File { get; set; }
+    public string? File { get; set; }
     public DateTime ReleaseDate { get; set; }
     public decimal Price { get; set; }
     // public List<Tag> Tags { get; set; }
@@ -18,6 +18,7 @@ public class DtoReturnTrack : IMapWith<Product>
     public string? WavFile { get; set; }
     public string Bpm { get; set; }
     public string Collaborator { get; set; }
+    public string ProductType { get; set; } = "tracks";
     
     public string User { get; set; }
     public string Genre { get; set; }
@@ -36,8 +37,7 @@ public class DtoReturnTrack : IMapWith<Product>
             .ForMember(dto => dto.User,
                 opt => opt.MapFrom(t => t.User.UserName))
             .ForMember(dto => dto.Image,
-                opt => opt.MapFrom(t =>
-                        string.Format("{0}{1}", "http://localhost:5057/", t.User.Image)))
+                opt => opt.MapFrom(t => t.User.Image))
             .ForMember(dto => dto.Genre,
                 opt => opt.MapFrom(t => t.Genre.Name))
             .ForMember(dto => dto.Subgenre,
@@ -45,6 +45,8 @@ public class DtoReturnTrack : IMapWith<Product>
             .ForMember(dto => dto.Key,
                 opt => opt.MapFrom(t => t.Key.Track_Key))
             .ForMember(dto => dto.Bpm,
-                opt => opt.MapFrom(t => t.Bpm));
+                opt => opt.MapFrom(t => t.Bpm))
+            .ForMember(dto => dto.ProductType,
+                opt => opt.MapFrom(t => "Tracks"));
     }
 }

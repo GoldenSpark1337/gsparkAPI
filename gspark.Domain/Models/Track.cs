@@ -17,7 +17,6 @@ namespace gspark.Domain.Models
         public int Plays { get; set; } = 0;
         public int Likes { get; set; } = 0;
 
-        public virtual ICollection<Order> Order { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<TrackPlaylist> TrackPlaylists { get; set; }
     }

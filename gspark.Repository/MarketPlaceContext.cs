@@ -1,4 +1,5 @@
 ﻿using gspark.Domain.Identity;
+using gspark.Domain.OrderAggregate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
@@ -48,6 +49,8 @@ namespace gspark.Repository
         }
         
         public DbSet<Track> Tracks => Set<Track>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Playlist> Playlists => Set<Playlist>();
         public DbSet<RecordLabel> RecordLabels => Set<RecordLabel>();
         public DbSet<Kit> Kits => Set<Kit>();
@@ -61,5 +64,7 @@ namespace gspark.Repository
         public DbSet<Subgenre> Subgenres => Set<Subgenre>();
         public DbSet<Key> Keys => Set<Key>();
         public DbSet<File> UploadedFiles => Set<File>();
+        public DbSet<UserProductLike> Likes => Set<UserProductLike>();
+        public DbSet<Message> Messages => Set<Message>();
     }
 }

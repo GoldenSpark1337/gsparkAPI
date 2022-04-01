@@ -13,6 +13,11 @@ public static class ApplicationServicesExtensions
     {
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<ILikesRepository, LikeRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IUserRepository, UserService>();
         services.AddScoped<IGenreRepository, GenreService>();
         services.AddScoped<IBasketRepository, BasketRepository>();

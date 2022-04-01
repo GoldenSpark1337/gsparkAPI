@@ -9,53 +9,66 @@ using gspark.Service.Features.Users.Commands.UpdateUser;
 using gspark.Service.Features.Users.Commands.UpdateUserInfo;
 using gspark.Service.Features.Users.Commands.DeleteUser;
 using gspark.Domain.Models;
+using gspark.Dtos.TrackDtos;
+using gspark.Repository;
 using gspark.Service.Common.Exceptions;
 using gspark.Service.Contract;
+using gspark.Service.Dtos.FileDtos;
+using gspark.Service.Dtos.ProductDtos;
+using gspark.Service.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using File = gspark.Domain.Models.File;
 
 namespace gspark.Controllers
 {
     public class UsersController : BaseController
     {
-        private readonly IUserRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly ILogger<UsersController> _logger;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ITokenService _tokenService;
+        private readonly IFileService _fileService;
+        private readonly MarketPlaceContext _context;
 
         public UsersController(
-            IUserRepository repo, 
+            IUnitOfWork unitOfWork, 
             IMediator mediator, 
             IMapper mapper, 
             ILogger<UsersController> logger,
             UserManager<User> userManager, 
             SignInManager<User> signInManager,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IFileService fileService,
+            MarketPlaceContext context)
         {
-            _repo = repo;
+            _unitOfWork = unitOfWork;
             _mediator = mediator;
             _mapper = mapper;
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _fileService = fileService;
+            _context = context;
         }
         
         [Authorize(Policy = "AdminRole")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<DtoReturnUser>>> GetAllUsersAsync(CancellationToken cts)
         {
-            var users = await _repo.GetAllUsersAsync();
+            var users = await _unitOfWork.UserRepository.GetAllUsersAsync();
             return Ok(_mapper.Map<IReadOnlyList<DtoReturnUser>>(users));
         }
 
         [HttpGet("musicians")]
-        public async Task<ActionResult<IReadOnlyList<DtoReturnMusician>>> GetAllMusicians()
+        public async Task<ActionResult<IReadOnlyList<DtoReturnMusician>>> GetAllMusicians([FromQuery] UserSpecParams userParams)
         {
-            var users = await _repo.GetAllUsersAsync();
+            var spec = new UserIncludeSpecification(userParams);
+            var users = await _unitOfWork.UserRepository.GetAllUsersAsync();
             return Ok(_mapper.Map<IReadOnlyList<DtoReturnMusician>>(users));
         }
 
@@ -84,11 +97,26 @@ namespace gspark.Controllers
             return await _userManager.FindByNameAsync(username) != null;
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("{username}", Name = "GetUsername")]
         public async Task<ActionResult<DtoReturnMusician>> GetUserByUsernameAsync(string username)
         {
-            var user = await _repo.GetUserByName(username);
+            var user = await _unitOfWork.UserRepository.GetUserByName(username);
             return Ok(_mapper.Map<DtoReturnMusician>(user));
+        }
+
+        [Authorize]
+        [HttpGet("{username}/tracks")]
+        public async Task<ActionResult<IReadOnlyList<DtoReturnTrack>>> GetUserTracks(string username)
+        {
+            var tracks = await _unitOfWork.UserRepository.GetUserTracks(username);
+            return Ok(tracks);
+        }
+        
+        [HttpGet("{username}/products")]
+        public async Task<ActionResult<IReadOnlyList<DtoReturnProduct>>> GetUserProducts(string username)
+        {
+            var products = await _unitOfWork.UserRepository.GetUserProducts(username);
+            return Ok(products);
         }
 
         [HttpPost("register")]
@@ -129,10 +157,50 @@ namespace gspark.Controllers
             return returnUser;
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> AddFile(IFormFile file)
+        [HttpPost("add-image")]
+        public async Task<ActionResult<DtoRetunFile>> AddImage(IFormFile file)
         {
-            return Ok();
+            var username = User.FindFirstValue(ClaimTypes.GivenName);
+            var user = await _unitOfWork.UserRepository
+                .GetUserByName(username);
+            var result = await _fileService.AddImageAsync(file);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var resultFile = new File()
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId,
+                UserId = user.Id
+            };
+
+            user.Image = resultFile.Url;
+            user.Files.Add(resultFile);
+            _unitOfWork.UserRepository.UpdateUser(user);
+            if (await _unitOfWork.Complete())
+            {
+                return CreatedAtRoute("GetUsername", new {username = user.UserName}, _mapper.Map<DtoRetunFile>(resultFile));
+            }
+            
+            return BadRequest("Problem adding image");
+        }
+        
+        [HttpPost("add-file")]
+        public async Task<ActionResult> AddFile(IFormFile file)
+        {
+            var user = await _unitOfWork.UserRepository.GetUserByName(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _fileService.AddFileAsync(file);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var resultFile = new File()
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+            };
+
+            user.Files.Add(resultFile);
+            // if (await _unitOfWork.Complete()) return Ok(_mapper.Map<DtoRetunFile>(resultFile));
+            
+            return BadRequest("Problem adding image");
         }
 
         [HttpPatch]
@@ -150,25 +218,33 @@ namespace gspark.Controllers
             return Ok(await _mediator.Send(updateUserInfo));
         }
 
-        // [Authorize]
-        [HttpPut("{id}/image")]
-        public async Task<IActionResult> UpdateUserImageAsync(int id, [FromForm] IFormFile file)
-        {
-            if (file.ContentType.Length > 0)
-            {
-                using (var stream = file.OpenReadStream())
-                {
-                    return Ok();
-                }
-            }
-            return NoContent();
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserAsync(int id)
         {
             var command = new DeleteUserCommand { Id = id };
             return Ok(await _mediator.Send(command));
+        }
+
+        [HttpDelete("delete-image/{imageId}")]
+        public async Task<IActionResult> DeleteImage(int imageId)
+        {
+            var user = await _unitOfWork.UserRepository
+                .GetUserByName(User.FindFirstValue(ClaimTypes.GivenName));
+            var image = user.Files.FirstOrDefault(x => x.Id == imageId);
+            // if (image.PublicId != null)
+            // {
+            //     var result = await _fileService.DeleteFileAsync(image.PublicId);
+            //     if (result.Error != null) return BadRequest(new ApiException(400, result.Error.Message));
+            // }
+            user.Image = null;
+            user.Files.Remove(image);
+            _unitOfWork.UserRepository.UpdateUser(user);
+            
+            if (await _unitOfWork.Complete())
+            {
+                return Ok();
+            }
+            return BadRequest("Wtf idk what happened");
         }
     }
 

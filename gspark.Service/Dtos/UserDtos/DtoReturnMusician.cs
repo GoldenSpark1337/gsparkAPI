@@ -3,6 +3,7 @@ using gspark.Domain.Models;
 using gspark.Dtos.TrackDtos;
 using gspark.Service.Common.Mappings;
 using gspark.Service.Dtos.ProductDtos;
+using File = gspark.Domain.Models.File;
 
 namespace gspark.Service.Dtos.UserDtos;
 
@@ -20,6 +21,7 @@ public class DtoReturnMusician : IMapWith<User>
     public IReadOnlyList<Kit> Kits { get; set; }
     public IReadOnlyList<Domain.Models.Service> Services { get; set; }
     public IReadOnlyList<DtoReturnProduct> Products { get; set; }
+    public List<File> Files { get; set; }
     public string RecordLabel { get; set; }
 
     public void Mapping(Profile profile)

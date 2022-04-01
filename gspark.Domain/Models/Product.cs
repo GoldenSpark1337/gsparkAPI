@@ -7,7 +7,7 @@ namespace gspark.Domain.Models
     {
         public string Title { get; set; }
         public string? Image { get; set; }
-        public byte[]? File { get; set; }
+        public string? File { get; set; }
         public DateTime ReleaseDate { get; set; } = DateTime.Now.Date;
         public decimal Price { get; set; }
         public string Description { get; set; }
@@ -17,8 +17,8 @@ namespace gspark.Domain.Models
         public virtual User User { get; set; }
         
         public virtual ICollection<ProductTags> ProductTags { get; set; }
+        public virtual ICollection<File> Files { get; set; }
+        public virtual ICollection<UserProductLike> Likes { get; set; }
 
-        public virtual Order Order { get; set; }
-        
     }
 }

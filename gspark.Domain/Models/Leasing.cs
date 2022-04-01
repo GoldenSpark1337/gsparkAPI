@@ -6,6 +6,8 @@ public class Leasing
     public string Name { get; set; }
     public decimal Price { get; set; }
     public int UserId { get; set; }
+    public string Streams { get; set; }
+    public string Copies { get; set; }
 
     public User User { get; set; }
 }

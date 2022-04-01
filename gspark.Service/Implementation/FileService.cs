@@ -22,7 +22,7 @@ public class FileService : IFileService
         _cloudinary = new Cloudinary(account);
     }
     
-    public async Task<ImageUploadResult> AddFileAsync(IFormFile file)
+    public async Task<ImageUploadResult> AddImageAsync(IFormFile file)
     {
         var uploadResult = new ImageUploadResult();
 
@@ -34,6 +34,24 @@ public class FileService : IFileService
                 File = new FileDescription(file.Name, stream)
             };
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        }
+
+        return uploadResult;
+    }
+
+    public async Task<RawUploadResult> AddFileAsync(IFormFile file)
+    {
+        var uploadResult = new RawUploadResult();
+
+        if (file.Length > 0)
+        {
+            using var stream = file.OpenReadStream();
+            var uploadParams = new RawUploadParams()
+            {
+                File = new FileDescription(file.Name, stream),
+                
+            };
+            uploadResult = await _cloudinary.UploadLargeAsync(uploadParams);
         }
 
         return uploadResult;

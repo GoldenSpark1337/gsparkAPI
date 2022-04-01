@@ -18,7 +18,7 @@ public class DtoCreateTrack: IMapWith<Track>
     public string Mp3File { get; set; }
     public string? WavFile { get; set; }
     public string Bpm { get; set; } = string.Empty;
-    public int TrackKey_Id { get; set; }
+    public int? TrackKey_Id { get; set; }
     public string Collaborator { get; set; } = string.Empty;
     public int GenreId { get; set; }
     public int SubGenreId { get; set; }

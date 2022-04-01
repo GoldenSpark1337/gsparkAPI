@@ -37,6 +37,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         return await ApplySpecification(specification).ToListAsync();
     }
 
+    public async Task<int> CountAsync(ISpecification<T> spec)
+    {
+        return await ApplySpecification(spec).CountAsync();
+    }
+
     private IQueryable<T> ApplySpecification(ISpecification<T> specification)
     {
         return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
@@ -54,6 +59,17 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         var entity = await _context.Set<T>().FindAsync(id);
         if (entity == null || entity.Id != id) throw new NotFoundException(nameof(entity), id);
         
+    }
+
+    public void Add(T entity)
+    {
+        _context.Set<T>().Add(entity);
+    }
+
+    public void Update(T entity)
+    {
+        _context.Set<T>().Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
     }
 
     public void DeleteAsync(int id)

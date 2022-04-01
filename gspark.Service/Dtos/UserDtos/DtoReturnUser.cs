@@ -2,6 +2,7 @@
 using gspark.Domain.Models;
 using gspark.Dtos.TrackDtos;
 using gspark.Service.Common.Mappings;
+using File = gspark.Domain.Models.File;
 
 namespace gspark.Service.Dtos.UserDtos;
 
@@ -20,6 +21,7 @@ public class DtoReturnUser : IMapWith<User>
     public IReadOnlyList<DtoReturnTrack> Tracks { get; set; }
     public IReadOnlyList<Kit> Kits { get; set; }
     public IReadOnlyList<Domain.Models.Service> Services { get; set; }
+    public IReadOnlyList<File> Files { get; set; }
     public string RecordLabel { get; set; }
 
     public void Mapping(Profile profile)
@@ -32,12 +34,9 @@ public class DtoReturnUser : IMapWith<User>
             .ForMember(dto => dto.RecordLabel,
                 opt => opt.MapFrom(u => u.RecordLabel.Name))
             .ForMember(dto => dto.Playlists,
-                opt => opt.MapFrom(u => u.Playlists));
-        // .ForMember(dto => dto.Tracks,
-        //     opt => opt.MapFrom(u => u.Tracks))
-        // .ForMember(dto => dto.Kits,
-        //     opt => opt.MapFrom(u => u.Kits))
-        // .ForMember(dto => dto.Services,
-        //     opt => opt.MapFrom(u => u.Services));
+                opt => opt.MapFrom(u => u.Playlists))
+            .ForMember(dto => dto.Files,
+                opt => opt.MapFrom(u => u.Files));
+        profile.CreateMap<User, User>();
     }
 }

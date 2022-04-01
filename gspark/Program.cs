@@ -40,6 +40,7 @@ try
     // Configure DbContext
     builder.Services.AddDbContext<MarketPlaceContext>(options =>
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql"))
             .UseSnakeCaseNamingConvention();
     });

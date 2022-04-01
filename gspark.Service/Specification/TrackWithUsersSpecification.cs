@@ -22,12 +22,12 @@ public class TrackWithUsersSpecification : BaseSpecification<Track>
     }
     
     public TrackWithUsersSpecification(TrackSpecParams trackParams)
-        : base(
-            // (string.IsNullOrEmpty(trackParams.Search) || (t.Title.ToLower().Contains(trackParams.Search))) &&
-            // (!trackParams.GenreId.HasValue || t.GenreId == trackParams.GenreId) &&
-            // (t.Price > (decimal)trackParams.minPrice && t.Price < (decimal)trackParams.maxPrice) &&
-            // (!trackParams.KeyId.HasValue || t.TrackKey_Id == trackParams.KeyId) &&
-            // (Convert.ToInt16(t.Bpm) > (int)trackParams.minBpm && Convert.ToInt16(t.Bpm) < (int)trackParams.maxBpm)
+        : base(t =>
+            (string.IsNullOrEmpty(trackParams.Search) || (t.Title.ToLower().Contains(trackParams.Search))) &&
+            (!trackParams.GenreId.HasValue || t.GenreId == trackParams.GenreId) &&
+            (t.Price > (decimal)trackParams.minPrice && t.Price < (decimal)trackParams.maxPrice) &&
+            (!trackParams.KeyId.HasValue || t.TrackKey_Id == trackParams.KeyId) &&
+            (Convert.ToInt16(t.Bpm) > (int)trackParams.minBpm && Convert.ToInt16(t.Bpm) < (int)trackParams.maxBpm)
         )
     {
         AddInclude(track => track.User);

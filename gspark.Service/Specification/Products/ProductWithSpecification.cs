@@ -22,20 +22,14 @@ public class ProductWithSpecification : BaseSpecification<Product>
             (string.IsNullOrEmpty(productParams.Category) || p.ProductType.Name.ToLower() == productParams.Category.ToLower()) &&
             (string.IsNullOrEmpty(productParams.Search) || (p.Title.ToLower().Contains(productParams.Search))) &&
             (p.Price > (decimal)productParams.minPrice && p.Price < (decimal)productParams.maxPrice)
-            
-            // ((!productParams.KeyId.HasValue && productParams.Category != "Tracks") 
-            //  || p.Tracks.TrackKey_Id == productParams.KeyId) &&
-            
-            // (productParams.Category != "Tracks") 
-            //     || (Convert.ToInt16(p.Tracks.Bpm) > (int)productParams.minBpm 
-            //         && Convert.ToInt16(p.Tracks.Bpm) < (int)productParams.maxBpm)
         )
     {
         AddInclude(p => p.User);
         AddInclude(p => p.ProductType);
+        ApplyPaging(productParams.PageSize * (productParams.PageIndex - 1), productParams.PageSize);
         
         if (!string.IsNullOrEmpty(productParams.SortBy))
-        {
+        { 
             switch (productParams.SortBy)
             {
                 case "oldest":

@@ -32,7 +32,7 @@ public class AdminController : BaseController
         return Ok(users);
     }
 
-    [Authorize(Policy = "AdminRole")]
+    [Authorize(Roles = "AdminRole")]
     [HttpPost("edit-roles/{username}")]
     public async Task<IActionResult> EditUserRoles([FromQuery] string roles, string username)
     {

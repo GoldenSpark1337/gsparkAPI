@@ -7,7 +7,6 @@ using gspark.Service.Common.Exceptions;
 using gspark.Service.Contract;
 using gspark.Service.Dtos.ProductDtos;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace gspark.Service.Implementation;
 
@@ -34,19 +33,19 @@ public class UserService: IUserRepository
     public async Task<IReadOnlyList<DtoReturnProduct>> GetUserProducts(string username)
     {
         return await _context.Products
-            .Where(p => p.User.UserName == username)
+            .Where(p => p.User.UserName == username && p.IsDraft == false)
             .ProjectTo<DtoReturnProduct>(_mapper.ConfigurationProvider)
             .ToListAsync();
     }
     
-    public async Task<IReadOnlyList<DtoReturnTrack>> GetUserTracks(string username)
+    public async Task<IReadOnlyList<DtoReturnTrack>> GetUserTracks(string username, bool isDraft)
     {
         var tracks = await _context.Tracks
             .Include(t => t.User)
             .Include(t => t.Genre)
             .Include(t => t.Subgenre)
             .Include(t => t.Key)
-            .Where(t => t.User.UserName == username)
+            .Where(t => t.User.UserName == username && t.IsDraft == isDraft)
             .ToListAsync();
         return _mapper.Map<IReadOnlyList<DtoReturnTrack>>(tracks);
     }

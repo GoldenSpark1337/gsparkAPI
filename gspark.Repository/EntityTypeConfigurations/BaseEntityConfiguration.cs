@@ -5,7 +5,7 @@ namespace gspark.Domain.EntityTypeConfigurations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    public class BaseEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : BaseEntity
+    public class BaseEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : class, IBaseEntity
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {

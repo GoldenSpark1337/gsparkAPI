@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace gspark.Service;
 
-public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
+public class SpecificationEvaluator<TEntity> where TEntity : class, IBaseEntity
 {
     public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec)
     {

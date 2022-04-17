@@ -67,12 +67,13 @@ namespace gspark.Controllers
         [HttpGet("musicians")]
         public async Task<ActionResult<IReadOnlyList<DtoReturnMusician>>> GetAllMusicians([FromQuery] UserSpecParams userParams)
         {
+            var currentUser = await _unitOfWork.UserRepository.GetUserByName(User.FindFirstValue(ClaimTypes.GivenName));
             var spec = new UserIncludeSpecification(userParams);
-            var users = await _unitOfWork.UserRepository.GetAllUsersAsync();
+            var users = await _unitOfWork.Repository<User>().ListAsync(spec);
             return Ok(_mapper.Map<IReadOnlyList<DtoReturnMusician>>(users));
         }
 
-        [Authorize(Roles = "Free, Admin")]
+        [Authorize]
         [HttpGet("account")]
         public async Task<DtoUser> GetCurrentUser()
         {
@@ -101,14 +102,16 @@ namespace gspark.Controllers
         public async Task<ActionResult<DtoReturnMusician>> GetUserByUsernameAsync(string username)
         {
             var user = await _unitOfWork.UserRepository.GetUserByName(username);
-            return Ok(_mapper.Map<DtoReturnMusician>(user));
+            var userRoles = await _userManager.GetRolesAsync(user);
+            DtoReturnMusician dto = new DtoReturnMusician() {Roles = userRoles};
+            return Ok(_mapper.Map(user, dto));
         }
 
         [Authorize]
         [HttpGet("{username}/tracks")]
-        public async Task<ActionResult<IReadOnlyList<DtoReturnTrack>>> GetUserTracks(string username)
+        public async Task<ActionResult<IReadOnlyList<DtoReturnTrack>>> GetUserTracks(string username, bool isDraft = false)
         {
-            var tracks = await _unitOfWork.UserRepository.GetUserTracks(username);
+            var tracks = await _unitOfWork.UserRepository.GetUserTracks(username, isDraft);
             return Ok(tracks);
         }
         
@@ -212,10 +215,15 @@ namespace gspark.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserInfoAsync(int id,[FromBody] UpdateUserInfoCommand updateUserInfo)
+        public async Task<IActionResult> UpdateUserInfo(DtoUpdateUser dtoUpdateUser)
         {
-            //TODO
-            return Ok(await _mediator.Send(updateUserInfo));
+            var user = await _unitOfWork.UserRepository.GetUserByName(User.FindFirstValue(ClaimTypes.GivenName));
+            _mapper.Map(dtoUpdateUser, user);
+            _unitOfWork.UserRepository.UpdateUser(user);
+            
+            if (await _unitOfWork.Complete()) return NoContent();
+
+            return BadRequest("Failed updating user");
         }
 
         [HttpDelete("{id}")]

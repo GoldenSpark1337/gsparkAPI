@@ -6,29 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace gspark.Service.Implementation;
 
-public class TrackService: ITrackRepository
+public class TrackRepository: ITrackRepository
 {
     private readonly MarketPlaceContext _context;
 
-    public TrackService(MarketPlaceContext context)
+    public TrackRepository(MarketPlaceContext context)
     {
         _context = context;
     }
-    
-    // public async Task<Track> GetTrackAsync(int id)
-    // {
-    //     var entity = await _context.Tracks
-    //         .Include(t => t.User)
-    //         .FirstOrDefaultAsync(t => t.Id == id);
-    //     return entity ?? throw new NotFoundException(nameof(entity), id);
-    // }
-
-    // public async Task<IReadOnlyList<Track>> GetAllTracksAsync()
-    // {
-    //     return await _context.Tracks
-    //         .Include(t => t.User)
-    //         .ToListAsync();
-    // }
 
     public async Task<int> AddTrack(Track track)
     {

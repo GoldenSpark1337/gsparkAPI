@@ -10,6 +10,7 @@ public class DtoUpdateUser : IMapWith<User>
     public string LastName { get; set; }
     public string Location { get; set; }
     public string Biography { get; set; }
+    public string? RecordLabel { get; set; }
 
     public void Mapping(Profile profile)
     {

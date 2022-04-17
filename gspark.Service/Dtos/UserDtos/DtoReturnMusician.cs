@@ -14,6 +14,7 @@ public class DtoReturnMusician : IMapWith<User>
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Image { get; set; }
+    public IList<string> Roles { get; set; }
     public string Location { get; set; }
     public string Biography { get; set; }
     public IReadOnlyList<Playlist> Playlists { get; set; }
@@ -29,6 +30,9 @@ public class DtoReturnMusician : IMapWith<User>
         profile.CreateMap<User, DtoReturnMusician>()
             .ForMember(dto => dto.Image,
                 opt => opt.MapFrom<UrlResolver<User, DtoReturnMusician>>())
+            // .ForMember(dto => dto.Roles,
+            //     opt => opt.MapFrom(u =>
+            //         u.UserRoles.Where(user => user.User.UserName == u.UserName).Select(ur => ur.Role.Name)))
             .ForMember(dto => dto.RecordLabel,
                 opt => opt.MapFrom(u => u.RecordLabel.Name))
             .ForMember(dto => dto.Playlists,

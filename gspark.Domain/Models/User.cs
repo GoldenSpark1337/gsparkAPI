@@ -15,9 +15,10 @@ namespace gspark.Domain.Models
         public string Biography { get; set; } = string.Empty;
         public int? RecordLabelId { get; set; }
 
-        
+
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<File> Files { get; set; }
+        public virtual ICollection<Leasing> Leasings { get; set; }
         public virtual ICollection<Playlist> Playlists { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual RecordLabel? RecordLabel { get; set; }

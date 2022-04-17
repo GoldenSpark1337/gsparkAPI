@@ -2,7 +2,6 @@
 using AutoMapper.QueryableExtensions;
 using gspark.Domain.Models;
 using gspark.Repository;
-using gspark.Service.Common.Pagination;
 using gspark.Service.Contract;
 using gspark.Service.Dtos.MessageDtos;
 using gspark.Service.Specification.Messages;
@@ -41,18 +40,33 @@ public class MessageRepository : IMessageRepository
     public async Task<IQueryable<DtoMessage>> GetMessagesForUser(MessageSpecParams messageParams)
     {
         var query = _context.Messages
-            .OrderByDescending(m => m.CreatedAt)
+            .OrderBy(m => m.CreatedAt)
             .AsQueryable();
 
         query = messageParams.Container switch
         {
             "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username),
             "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username),
-            _ => query.Where(u => u.Recipient.UserName == messageParams.Username && u.DateRead == null)
+            "Unread" => query.Where(u => u.Recipient.UserName == messageParams.Username && u.DateRead == null),
+            _ => query.Where(u => u.Recipient.UserName == messageParams.Username || u.Sender.UserName == messageParams.Username)
         };
 
         var messages = query.ProjectTo<DtoMessage>(_mapper.ConfigurationProvider);
         return messages;
+    }
+
+    public async Task<IReadOnlyList<DtoMessage>> GetLastMessagesForUser(string currentUsername)
+    {
+        var messages = await _context.Messages
+            .Include(m => m.Sender).ThenInclude(u => u.Files)
+            .Include(m => m.Recipient).ThenInclude(u => u.Files)
+            .Where(m => m.RecipientUsername == currentUsername)
+            .OrderBy(m => m.CreatedAt)
+            .ToListAsync();
+        
+        
+        
+        return _mapper.Map<IReadOnlyList<DtoMessage>>(messages);
     }
 
     public async Task<IEnumerable<DtoMessage>> GetMessageThread(string currentUsername, string recipientUsername)

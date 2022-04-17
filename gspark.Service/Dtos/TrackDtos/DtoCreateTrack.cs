@@ -6,22 +6,23 @@ namespace gspark.Dtos.TrackDtos;
 
 public class DtoCreateTrack: IMapWith<Track>
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = "New Track";
     public string? Image { get; set; }
-    public byte[]? File { get; set; }
+    public string? File { get; set; }
     public DateTime ReleaseDate { get; set; } = DateTime.Now;
-    public decimal Price { get; set; }
-    // public List<Tag> Tags { get; set; }
-    public string Description { get; set; }
-    public int ProductTypeId { get; set; }
+
+    public decimal Price { get; set; } = 1;
+    public string Description { get; set; } = string.Empty;
+    public int ProductTypeId { get; set; } = 1;
     public int UserId { get; set; }
-    public string Mp3File { get; set; }
+    public string Mp3File { get; set; } = string.Empty;
     public string? WavFile { get; set; }
-    public string Bpm { get; set; } = string.Empty;
+    public string Bpm { get; set; } = "1";
     public int? TrackKey_Id { get; set; }
     public string Collaborator { get; set; } = string.Empty;
-    public int GenreId { get; set; }
-    public int SubGenreId { get; set; }
+    public int GenreId { get; set; } = 1;
+    public int SubGenreId { get; set; } = 1;
+    public List<string> Tags { get; set; } = new List<string>() {""};
 
     public void Mapping(Profile profile)
     {

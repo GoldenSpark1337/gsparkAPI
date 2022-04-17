@@ -2,7 +2,7 @@
 
 namespace gspark.Domain.OrderAggregate;
 
-public class Order : BaseEntity
+public class Order : IBaseEntity
 {
     public Order() {}
     
@@ -13,6 +13,7 @@ public class Order : BaseEntity
         Total = total;
     }
 
+    public int Id { get; set; }
     public string Email { get; set; }
     public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
     public IReadOnlyList<OrderItem> OrderItems { get; set; }

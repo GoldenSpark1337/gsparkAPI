@@ -4,4 +4,5 @@ public class DtoLike
 {
     public int Id { get; set; }
     public string Username { get; set; }
+    public string Image { get; set; }
 }

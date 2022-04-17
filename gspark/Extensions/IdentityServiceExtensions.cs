@@ -40,6 +40,7 @@ public static class IdentityServiceExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminRole", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("ProPage", policy => policy.RequireRole("Admin", "ProPage"));
         });
         
         return services;

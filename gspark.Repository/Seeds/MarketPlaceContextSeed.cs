@@ -123,14 +123,26 @@ namespace gspark.Repository
                 {
                     var user = new User()
                     {
-                        UserName = "gspark",
-                        Email = "gspark1337@gmail.com",
+                        UserName = "admin",
+                        Email = "admin@example.com",
                     };
-                    await userManager.CreateAsync(user, "Nomad1984$$$");
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
                     await userManager.AddToRoleAsync(user, "Admin");
                 }
-                
-                
+
+                if (!dbContext.Leasings.Any())
+                {
+                    await dbContext.Leasings.AddRangeAsync(
+                        new Leasing {Id = 1, Name = "Basic License", Price = 19, IsActive = true, 
+                            Copies = "10000", Streams = "40000", TrackType = "mp3"},
+                        new Leasing {Id = 2, Name = "Premium License", Price = 39, IsActive = true, 
+                            Copies = "3000", Streams = "500000", TrackType = "mp3, wav"},
+                        new Leasing {Id = 3, Name = "Premium Plus License", Price = 99, IsActive = true, 
+                            Copies = "10000", Streams = "500000", TrackType = "mp3, wav, stems"},
+                        new Leasing {Id = 4, Name = "Exclusive", Price = 199, IsActive = true, 
+                            Copies = "Unlimited", Streams = "Unlimited", TrackType = "mp3, wav, stems"}
+                    );
+                }
                 
                 await dbContext.SaveChangesAsync();
             }

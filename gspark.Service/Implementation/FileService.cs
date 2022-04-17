@@ -41,15 +41,14 @@ public class FileService : IFileService
 
     public async Task<RawUploadResult> AddFileAsync(IFormFile file)
     {
-        var uploadResult = new RawUploadResult();
+        var uploadResult = new VideoUploadResult();
 
         if (file.Length > 0)
         {
             using var stream = file.OpenReadStream();
-            var uploadParams = new RawUploadParams()
+            var uploadParams = new VideoUploadParams()
             {
                 File = new FileDescription(file.Name, stream),
-                
             };
             uploadResult = await _cloudinary.UploadLargeAsync(uploadParams);
         }

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using gspark.Domain.Models;
 using gspark.Dtos.TrackDtos;
 using gspark.Service.Common.Pagination;
@@ -33,7 +34,8 @@ public class ProductController : BaseController
         
         var totalItems = await _repo.Repository<Product>().CountAsync(countSpec);
         var entities = await _repo.Repository<Product>().ListAsync(spec);
-        var data = _mapper.Map<IReadOnlyList<DtoReturnProduct>>(entities);
+        var entitiesDraft = entities.Where(p => p.IsDraft == productParams.IsDraft);
+        var data = _mapper.Map<IReadOnlyList<DtoReturnProduct>>(entitiesDraft);
         
         return Ok(new Pagination<DtoReturnProduct>(productParams.PageIndex, 
             productParams.PageSize, totalItems, data));
@@ -74,6 +76,8 @@ public class ProductController : BaseController
     [HttpPost]
     public async Task<IActionResult> AddProduct([FromBody] DtoCreateProduct dtoCreateProduct)
     {
+        var user = await _repo.UserRepository.GetUserByName(User.FindFirstValue(ClaimTypes.GivenName));
+        dtoCreateProduct.UserId = user.Id;
         var entity = _mapper.Map<Product>(dtoCreateProduct);
         return Ok(await _repo.Repository<Product>().AddEntityAsync(entity));
     }
@@ -81,25 +85,27 @@ public class ProductController : BaseController
     [HttpPost("add-image")]
     public async Task<ActionResult<DtoRetunFile>> AddProductImage(IFormFile file, int id)
     {
+        var username = User.FindFirstValue(ClaimTypes.GivenName);
+        var user = await _repo.UserRepository
+            .GetUserByName(username);
         var product = await _repo.Repository<Product>().GetByIdAsync(id);
+        
         var result = await _fileService.AddImageAsync(file);
-
         if (result.Error != null) return BadRequest(result.Error.Message);
 
         var resultFile = new File()
         {
             Url = result.SecureUrl.AbsoluteUri,
-            PublicId = result.PublicId
+            PublicId = result.PublicId,
+            UserId = user.Id
         };
 
         product.Image = resultFile.Url;
-        Console.WriteLine(product.User.Files);
         product.Files.Add(resultFile);
         _repo.Repository<Product>().Update(product);
         if (await _repo.Complete())
         {
             return _mapper.Map<DtoRetunFile>(resultFile);
-            // return CreatedAtRoute("GetUsername", new {}, _mapper.Map<DtoRetunFile>(resultFile));
         }
             
         return BadRequest("Problem adding image");

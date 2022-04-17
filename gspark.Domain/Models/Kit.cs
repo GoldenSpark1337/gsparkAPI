@@ -1,7 +1,8 @@
 ﻿namespace gspark.Domain.Models
 {
-    public class Kit : BaseEntity
+    public class Kit : IBaseEntity
     {
+        public int Id { get; set; }
         // public string Title { get; set; } = string.Empty;
         // public byte[]? Artwork { get; set; }
         // public string Description { get; set; } = string.Empty;

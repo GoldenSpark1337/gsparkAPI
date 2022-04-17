@@ -1,7 +1,8 @@
 ﻿namespace gspark.Domain.Models;
 
-public class Message : BaseEntity
+public class Message : IBaseEntity
 {
+    public int Id { get; set; }
     public int SenderId { get; set; }
     public string SenderUsername { get; set; }
     public User Sender { get; set; }

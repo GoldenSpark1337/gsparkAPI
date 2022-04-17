@@ -20,7 +20,7 @@ public class UnitOfWork : IUnitOfWork
         _mapper = mapper;
     }
 
-    public IGenericRepository<T> Repository<T>() where T : BaseEntity
+    public IGenericRepository<T> Repository<T>() where T : class, IBaseEntity
     {
         if (_repositories == null) _repositories = new Hashtable();
 
@@ -37,7 +37,9 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IUserRepository UserRepository => new UserService(_dbContext, _mapper);
+    public ITrackRepository TrackRepository { get; }
     public IMessageRepository MessageRepository => new MessageRepository(_dbContext, _mapper);
+    public ILikesRepository LikesRepository => new LikeRepository(_dbContext);
 
     public async Task<bool> Complete()
     {

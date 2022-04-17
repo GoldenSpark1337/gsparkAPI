@@ -57,6 +57,7 @@ public class MessageController : BaseController
     public async Task<ActionResult<Pagination<DtoMessage>>> GetMessagesForUser(
         [FromQuery] MessageSpecParams messageParams)
     {
+        messageParams.Username = User.FindFirstValue(ClaimTypes.GivenName);
         var spec = new MessageWithSpecification(messageParams);
         var countSpec = new MessageWithCountSpecification(messageParams);
         
@@ -66,6 +67,13 @@ public class MessageController : BaseController
         
         return Ok(new Pagination<DtoMessage>(messageParams.PageIndex, 
             messageParams.PageSize, totalItems, data));
+    }
+
+    [HttpGet("last")]
+    public async Task<ActionResult<IReadOnlyList<DtoMessage>>> GetLastMessages()
+    {
+        var currentUser = User.FindFirstValue(ClaimTypes.GivenName);
+        return Ok(await _unitOfWork.MessageRepository.GetLastMessagesForUser(currentUser));
     }
 
     [HttpGet("thread/{username}")]

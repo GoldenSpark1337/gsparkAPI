@@ -1,7 +1,8 @@
 ﻿namespace gspark.Domain.Models
 {
-    public class Playlist : BaseEntity
+    public class Playlist : IBaseEntity
     {
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public byte[]? Artwork { get; set; }
         public string Description { get; set; } = string.Empty;

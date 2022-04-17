@@ -24,6 +24,7 @@ public class DtoReturnTrack : IMapWith<Product>
     public string Genre { get; set; }
     public string Subgenre { get; set; }
     public string Key { get; set; }
+    public bool IsDraft { get; set; }
     public int Plays { get; set; } = 0;
     public int Likes { get; set; } = 0;
 

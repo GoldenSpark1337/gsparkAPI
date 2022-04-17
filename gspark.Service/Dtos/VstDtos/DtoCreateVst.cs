@@ -8,7 +8,7 @@ public class DtoCreateVst : IMapWith<Vst>
 {
     public string Title { get; set; }
     public string? Image { get; set; }
-    public byte[]? File { get; set; }
+    public string? File { get; set; }
     public DateTime ReleaseDate { get; set; } = DateTime.Now;
     public decimal Price { get; set; }
     public string Description { get; set; }

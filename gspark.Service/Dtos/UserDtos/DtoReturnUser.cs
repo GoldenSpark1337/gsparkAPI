@@ -11,6 +11,7 @@ public class DtoReturnUser : IMapWith<User>
     public int Id { get; set; }
     public string Username { get; set; }
     public string Email { get; set; }
+    public List<string> Role { get; set; }
     public string Password { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -31,6 +32,9 @@ public class DtoReturnUser : IMapWith<User>
                 opt => opt.MapFrom<UrlResolver<User, DtoReturnUser>>())
             .ForMember(dto => dto.Password,
                 opt => opt.MapFrom(u => u.PasswordHash))
+            .ForMember(dto => dto.Role,
+                opt => opt.MapFrom(u => 
+                    u.UserRoles.Select(ur => ur.Role.Name)))
             .ForMember(dto => dto.RecordLabel,
                 opt => opt.MapFrom(u => u.RecordLabel.Name))
             .ForMember(dto => dto.Playlists,

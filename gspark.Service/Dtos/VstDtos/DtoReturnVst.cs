@@ -9,7 +9,7 @@ public class DtoReturnVst : IMapWith<Vst>
     public int Id { get; set; }
     public string Title { get; set; }
     public string? Image { get; set; }
-    public byte[]? File { get; set; }
+    public string? File { get; set; }
     public DateTime ReleaseDate { get; set; }
     public decimal Price { get; set; }
     public string Description { get; set; }

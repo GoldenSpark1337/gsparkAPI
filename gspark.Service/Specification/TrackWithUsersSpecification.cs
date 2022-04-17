@@ -35,6 +35,7 @@ public class TrackWithUsersSpecification : BaseSpecification<Track>
         AddInclude(track => track.Subgenre);
         AddInclude(track => track.Key);
         AddInclude(track => track.Comments);
+        AddOrderByDescending(track => track.ReleaseDate);
 
         // if (!string.IsNullOrEmpty(trackParams.SortBy))
         // {

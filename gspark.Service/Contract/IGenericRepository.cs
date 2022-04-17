@@ -3,7 +3,7 @@ using gspark.Service.Specification;
 
 namespace gspark.Service.Contract;
 
-public interface IGenericRepository<T> where T : class
+public interface IGenericRepository<T> where T : class, IBaseEntity
 {
     Task<T> GetByIdAsync(int id);
     Task<IReadOnlyList<T>> GetAllAsync();

@@ -8,7 +8,7 @@ namespace gspark.Service.Dtos.ProductDtos;
 
 public class DtoCreateProduct : IMapWith<Product>
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = "New Product";
     public string? Image { get; set; }
     public byte[]? File { get; set; }
     public DateTime ReleaseDate { get; set; } = DateTime.Now;
@@ -17,8 +17,6 @@ public class DtoCreateProduct : IMapWith<Product>
     public string Description { get; set; }
     public int ProductTypeId { get; set; }
     public int UserId { get; set; }
-    // public int? VstId { get; set; }
-    // public int? TrackId { get; set; }
 
     public void Mapping(Profile profile)
     {

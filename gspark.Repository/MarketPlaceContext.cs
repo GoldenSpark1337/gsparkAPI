@@ -52,6 +52,7 @@ namespace gspark.Repository
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Playlist> Playlists => Set<Playlist>();
+        public DbSet<Leasing> Leasings => Set<Leasing>();
         public DbSet<RecordLabel> RecordLabels => Set<RecordLabel>();
         public DbSet<Kit> Kits => Set<Kit>();
         public DbSet<Service> Services => Set<Service>();

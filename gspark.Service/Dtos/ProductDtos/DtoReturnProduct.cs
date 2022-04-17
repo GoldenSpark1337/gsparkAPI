@@ -17,6 +17,7 @@ public class DtoReturnProduct : IMapWith<Product>
     public string Description { get; set; }
     public string ProductType { get; set; }
     public string User { get; set; }
+    public bool IsDraft { get; set; }
 
     public void Mapping(Profile profile)
     {

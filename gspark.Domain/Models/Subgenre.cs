@@ -1,7 +1,8 @@
 ﻿namespace gspark.Domain.Models
 {
-    public class Subgenre : BaseEntity
+    public class Subgenre : IBaseEntity
     {
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int GenreId { get; set; }
 

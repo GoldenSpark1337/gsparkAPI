@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace gspark.Service.Implementation;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+public class GenericRepository<T> : IGenericRepository<T> where T : class, IBaseEntity
 {
     private readonly MarketPlaceContext _context;
 

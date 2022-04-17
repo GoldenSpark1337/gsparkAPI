@@ -2,8 +2,8 @@
 
 public class MessageSpecParams
 {
-    public string Username { get; set; }
-    public string Container { get; set; } = "Unread";
+    public string? Username { get; set; }
+    public string Container { get; set; } = "All";
     
     private const int MaxPageSize = 50;
     public int PageIndex { get; set; } = 1;

@@ -10,7 +10,7 @@ public interface IUserRepository
     // Task<DtoReturnMusician> GetUserByIdAsync(int id);
     Task<User> GetUserByName(string username);
     Task<IReadOnlyList<DtoReturnProduct>> GetUserProducts(string username);
-    Task<IReadOnlyList<DtoReturnTrack>> GetUserTracks(string username);
+    Task<IReadOnlyList<DtoReturnTrack>> GetUserTracks(string username, bool isDraft);
     Task<int> AddUser(User user);
     void UpdateUser(User user);
     Task DeleteUser(int id);

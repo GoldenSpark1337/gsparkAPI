@@ -15,7 +15,6 @@ namespace gspark.Domain.Models
         public virtual Subgenre Subgenre { get; set; }
         public virtual Key Key { get; set; }
         public int Plays { get; set; } = 0;
-        public int Likes { get; set; } = 0;
 
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<TrackPlaylist> TrackPlaylists { get; set; }

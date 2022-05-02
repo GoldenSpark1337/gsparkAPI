@@ -14,6 +14,7 @@ namespace gspark.Domain.Models
         public string Location { get; set; } = string.Empty;
         public string Biography { get; set; } = string.Empty;
         public int? RecordLabelId { get; set; }
+        public decimal Balance { get; set; }
 
 
         public virtual ICollection<Product> Products { get; set; }

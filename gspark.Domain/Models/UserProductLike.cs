@@ -6,4 +6,5 @@ public class UserProductLike
     public int UserId { get; set; }
     public Product Product { get; set; } // Liked product
     public int ProductId { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 }

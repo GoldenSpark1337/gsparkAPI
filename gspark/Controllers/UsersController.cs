@@ -67,7 +67,6 @@ namespace gspark.Controllers
         [HttpGet("musicians")]
         public async Task<ActionResult<IReadOnlyList<DtoReturnMusician>>> GetAllMusicians([FromQuery] UserSpecParams userParams)
         {
-            var currentUser = await _unitOfWork.UserRepository.GetUserByName(User.FindFirstValue(ClaimTypes.GivenName));
             var spec = new UserIncludeSpecification(userParams);
             var users = await _unitOfWork.Repository<User>().ListAsync(spec);
             return Ok(_mapper.Map<IReadOnlyList<DtoReturnMusician>>(users));
@@ -107,7 +106,6 @@ namespace gspark.Controllers
             return Ok(_mapper.Map(user, dto));
         }
 
-        [Authorize]
         [HttpGet("{username}/tracks")]
         public async Task<ActionResult<IReadOnlyList<DtoReturnTrack>>> GetUserTracks(string username, bool isDraft = false)
         {
@@ -116,10 +114,16 @@ namespace gspark.Controllers
         }
         
         [HttpGet("{username}/products")]
-        public async Task<ActionResult<IReadOnlyList<DtoReturnProduct>>> GetUserProducts(string username)
+        public async Task<ActionResult<IReadOnlyList<DtoReturnProduct>>> GetUserProducts(string username, bool isDraft = false)
         {
-            var products = await _unitOfWork.UserRepository.GetUserProducts(username);
+            var products = await _unitOfWork.UserRepository.GetUserProducts(username, isDraft);
             return Ok(products);
+        }
+
+        [HttpGet("{username}/stats/{period}")]
+        public async Task<ActionResult<DtoReturnUserQuickStats>> GetUserQuickStats(string username, string period)
+        {
+            return Ok(await _unitOfWork.UserRepository.GetUserQuickStats(username, period));
         }
 
         [HttpPost("register")]

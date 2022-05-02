@@ -82,4 +82,19 @@ public class MessageController : BaseController
         var currentUser = User.FindFirstValue(ClaimTypes.GivenName);
         return Ok(await _unitOfWork.MessageRepository.GetMessageThread(currentUser, username));
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteMessage(int id)
+    {
+        var username = User.FindFirstValue(ClaimTypes.GivenName);
+        var message = await _unitOfWork.MessageRepository.GetMessage(id);
+
+        if (message.Sender.UserName == username) message.SenderDeleted = true;
+        if (message.Recipient.UserName == username) message.RecipientDeleted = true;
+        if (message.SenderDeleted && message.RecipientDeleted) _unitOfWork.MessageRepository.DeleteMessage(message);
+
+        if (await _unitOfWork.Complete()) return NoContent();
+        
+        return BadRequest("Failed to delete message");
+    }
 }

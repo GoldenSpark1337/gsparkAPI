@@ -45,10 +45,15 @@ public class MessageRepository : IMessageRepository
 
         query = messageParams.Container switch
         {
-            "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username),
-            "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username),
-            "Unread" => query.Where(u => u.Recipient.UserName == messageParams.Username && u.DateRead == null),
-            _ => query.Where(u => u.Recipient.UserName == messageParams.Username || u.Sender.UserName == messageParams.Username)
+            "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username 
+                                         && u.RecipientDeleted == false),
+            "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username 
+                                         && u.SenderDeleted == false),
+            "Unread" => query.Where(u => u.Recipient.UserName == messageParams.Username 
+                                         && u.RecipientDeleted == false 
+                                         && u.DateRead == null),
+            _ => query.Where(u => u.Recipient.UserName == messageParams.Username || u.Sender.UserName == messageParams.Username 
+                                         && u.RecipientDeleted == false)
         };
 
         var messages = query.ProjectTo<DtoMessage>(_mapper.ConfigurationProvider);
@@ -74,10 +79,10 @@ public class MessageRepository : IMessageRepository
         var messages = await _context.Messages
             .Include(m => m.Sender).ThenInclude(u => u.Files)
             .Include(m => m.Recipient).ThenInclude(u => u.Files)
-            .Where(m => m.Recipient.UserName == currentUsername
+            .Where(m => m.Recipient.UserName == currentUsername && m.RecipientDeleted == false
                         && m.Sender.UserName == recipientUsername
                         || m.Recipient.UserName == recipientUsername
-                        && m.Sender.UserName == currentUsername
+                        && m.Sender.UserName == currentUsername && m.SenderDeleted == false
             )
             .OrderBy(m => m.CreatedAt)
             .ToListAsync();

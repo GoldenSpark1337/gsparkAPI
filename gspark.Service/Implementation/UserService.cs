@@ -6,7 +6,9 @@ using gspark.Repository;
 using gspark.Service.Common.Exceptions;
 using gspark.Service.Contract;
 using gspark.Service.Dtos.ProductDtos;
+using gspark.Service.Dtos.UserDtos;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 
 namespace gspark.Service.Implementation;
 
@@ -30,10 +32,10 @@ public class UserService: IUserRepository
             .ToListAsync();
     }
 
-    public async Task<IReadOnlyList<DtoReturnProduct>> GetUserProducts(string username)
+    public async Task<IReadOnlyList<DtoReturnProduct>> GetUserProducts(string username, bool isDraft)
     {
         return await _context.Products
-            .Where(p => p.User.UserName == username && p.IsDraft == false)
+            .Where(p => p.User.UserName == username && p.IsDraft == isDraft)
             .ProjectTo<DtoReturnProduct>(_mapper.ConfigurationProvider)
             .ToListAsync();
     }
@@ -50,9 +52,36 @@ public class UserService: IUserRepository
         return _mapper.Map<IReadOnlyList<DtoReturnTrack>>(tracks);
     }
 
-    // public async Task<IReadOnlyList<DtoReturnVst>> GetUserVsts(string username)
-    // {
-    // }
+    public async Task<DtoReturnUserQuickStats> GetUserQuickStats(string username, string period)
+    {
+        DtoReturnUserQuickStats dtoQuickStats = new DtoReturnUserQuickStats();
+        var tracks = await _context.Tracks
+            .Include(t => t.User)
+            .Include(t => t.Genre)
+            .Include(t => t.Subgenre)
+            .Include(t => t.Key)
+            .Include(t => t.Likes)
+            .Where(t => t.User.UserName == username)
+            .ToListAsync();
+        
+        switch (period.ToLower())
+        {
+            case "бүгін":
+                dtoQuickStats.Likes = tracks
+                    .Where(t => t.Likes.Any(l => l.CreatedAt.ToString("dd/MM/yyyy") == DateTime.Now.ToShortDateString()))
+                    .Sum(t => t.Likes.Count);
+                dtoQuickStats.Plays = tracks.Sum(t => t.Plays);
+                break;
+            case "соңғы 30 күн":
+                dtoQuickStats.Likes = tracks
+                    .Where(t => t.Likes.Any(l => l.CreatedAt == DateTime.Now.AddMonths(-1)))
+                    .Sum(t => t.Likes.Count);
+                dtoQuickStats.Plays = tracks.Sum(t => t.Plays);
+                break;
+        }
+
+        return dtoQuickStats;
+    }
 
     public async Task<User> GetUserByName(string username)
     {

@@ -13,6 +13,7 @@ public class DtoReturnUserQuickStats : IMapWith<Product>
     public int ActiveCampaigns { get; set; }
     public int Reposts { get; set; }
     public int Comments { get; set; }
+    public int Likes { get; set; }
     public int Plays { get; set; }
     public int FreeDownloads { get; set; }
 

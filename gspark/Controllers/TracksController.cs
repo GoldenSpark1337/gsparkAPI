@@ -16,12 +16,14 @@ public class TracksController : BaseController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IFileService _fileService;
+    private readonly ILogger<TracksController> _logger;
 
-    public TracksController(IUnitOfWork unitOfWork, IMapper mapper, IFileService fileService)
+    public TracksController(IUnitOfWork unitOfWork, IMapper mapper, IFileService fileService, ILogger<TracksController> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _fileService = fileService;
+        _logger = logger;
     }
     
     [HttpGet]
@@ -59,18 +61,23 @@ public class TracksController : BaseController
         var user = await _unitOfWork.UserRepository.GetUserByName(User.FindFirstValue(ClaimTypes.GivenName));
         var track = await _unitOfWork.Repository<Track>().GetByIdAsync(id);
         
-        var result = _fileService.AddFileAsync(file);
-        if (result.Result.Error != null) return BadRequest(result.Result.Error.Message);
-
+        var result = await _fileService.AddFileAsync(file);
+        if (result.Error != null)
+        {
+            _logger.LogError(result.Error.Message);
+            return BadRequest(result.Error.Message);
+        }
+        
         var resultFile = new File()
         {
-            Url = result.Result.Url.AbsoluteUri,
-            PublicId = result.Result.PublicId,
+            Url = result.Url.AbsoluteUri,
+            PublicId = result.PublicId,
             UserId = user.Id
         };
 
         await _unitOfWork.Repository<File>().AddEntityAsync(resultFile);
-        dtoUpdateTrack.File = resultFile.Url;
+        var deliveryUrl = await _fileService.DownloadFile(result);
+        dtoUpdateTrack.File = deliveryUrl;
         var entity = _mapper.Map(dtoUpdateTrack, track);
         
         _unitOfWork.Repository<Track>().Update(entity);
@@ -79,6 +86,17 @@ public class TracksController : BaseController
             return Ok();
         }
         return BadRequest("Failed to update");
+    }
+
+    [HttpPatch("edit/{id}/plays")]
+    public async Task<IActionResult> UpdateTrackPlays(int id)
+    {
+        var track = await _unitOfWork.Repository<Track>().GetByIdAsync(id);
+        track.Plays++;
+        _unitOfWork.Repository<Track>().Update(track);
+        if (await _unitOfWork.Complete()) return Ok();
+
+        return BadRequest("Failed to play audio");
     }
 
     [HttpDelete("{id}")]

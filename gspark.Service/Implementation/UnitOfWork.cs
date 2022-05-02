@@ -3,7 +3,6 @@ using AutoMapper;
 using gspark.Domain.Models;
 using gspark.Repository;
 using gspark.Service.Contract;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace gspark.Service.Implementation;

@@ -18,15 +18,18 @@ public class DtoReturnProduct : IMapWith<Product>
     public string ProductType { get; set; }
     public string User { get; set; }
     public bool IsDraft { get; set; }
+    public int Likes { get; set; }
 
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Product, DtoReturnProduct>()
             .ForMember(dto => dto.Image,
                 opt => opt.MapFrom(p => p.User.Image))
-            .ForMember(dto => dto.ProductType, 
+            .ForMember(dto => dto.ProductType,
                 opt => opt.MapFrom(p => p.ProductType.Name))
-            .ForMember(dto => dto.User, 
-                opt => opt.MapFrom(p => p.User.UserName));
+            .ForMember(dto => dto.User,
+                opt => opt.MapFrom(p => p.User.UserName))
+            .ForMember(dto => dto.Likes,
+                opt => opt.MapFrom(p => p.Likes.Count));
     }
 }

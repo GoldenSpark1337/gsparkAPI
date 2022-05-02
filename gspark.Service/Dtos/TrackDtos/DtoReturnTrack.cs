@@ -10,6 +10,7 @@ public class DtoReturnTrack : IMapWith<Product>
     public string Title { get; set; }
     public string Image { get; set; }
     public string? File { get; set; }
+    public string? DeliveryUrl { get; set; }
     public DateTime ReleaseDate { get; set; }
     public decimal Price { get; set; }
     // public List<Tag> Tags { get; set; }
@@ -26,14 +27,14 @@ public class DtoReturnTrack : IMapWith<Product>
     public string Key { get; set; }
     public bool IsDraft { get; set; }
     public int Plays { get; set; } = 0;
-    public int Likes { get; set; } = 0;
+    public int Likes { get; set; }
 
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Product, DtoReturnTrack>()
             .ForMember(dto => dto.User,
                 opt => opt.MapFrom(t => t.User.UserName));
-        
+
         profile.CreateMap<Track, DtoReturnTrack>()
             .ForMember(dto => dto.User,
                 opt => opt.MapFrom(t => t.User.UserName))
@@ -48,6 +49,8 @@ public class DtoReturnTrack : IMapWith<Product>
             .ForMember(dto => dto.Bpm,
                 opt => opt.MapFrom(t => t.Bpm))
             .ForMember(dto => dto.ProductType,
-                opt => opt.MapFrom(t => "Tracks"));
+                opt => opt.MapFrom(t => "Tracks"))
+            .ForMember(dto => dto.Likes,
+                opt => opt.MapFrom(t => t.Likes));
     }
 }

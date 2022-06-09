@@ -85,7 +85,7 @@ public class TracksController : BaseController
         {
             return Ok();
         }
-        return BadRequest("Failed to update");
+        return BadRequest("Failed to publish");
     }
 
     [HttpPatch("edit/{id}/plays")]

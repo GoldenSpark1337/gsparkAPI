@@ -9,37 +9,40 @@ namespace gspark.API.Controllers;
 
 public class GenreController : BaseController
 {
-    private readonly IGenreRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public GenreController(IGenreRepository repository, IMapper mapper)
+    public GenreController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _repository = repository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<IReadOnlyList<Genre>> GetAllGenresAsync()
+    public async Task<ActionResult<IReadOnlyList<DtoReturnGenre>>> GetAllGenresAsync()
     {
-        return await _repository.GetAllGenresAsync();
+        var genres =  await _unitOfWork.Repository<Genre>().GetAllAsync();
+        return Ok(_mapper.Map<IReadOnlyList<DtoReturnGenre>>(genres));
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetGenreByIdAsync(int id)
+    public async Task<ActionResult<DtoReturnGenre>> GetGenreByIdAsync(int id)
     {
-        return Ok(await _repository.GetGenreAsync(id));
+        var genre = await _unitOfWork.Repository<Genre>().GetByIdAsync(id);
+        return Ok(_mapper.Map<DtoReturnGenre>(genre));
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddGenreAsync(DtoCreateGenre dtoCreateGenre)
+    public async Task<ActionResult<int>> AddGenreAsync(DtoCreateGenre dtoCreateGenre)
     {
         var entity = _mapper.Map<Genre>(dtoCreateGenre);
-        return Ok(await _repository.AddGenreAsync(entity));
+        return Ok(await _unitOfWork.Repository<Genre>().AddEntityAsync(entity));
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteGenreAsync(int id)
+    public async Task<ActionResult> DeleteGenreAsync(int id)
     {
-        return Ok(_repository.DeleteGenre(id));
+        _unitOfWork.Repository<Genre>().DeleteAsync(id);
+        return Ok();
     }
 }

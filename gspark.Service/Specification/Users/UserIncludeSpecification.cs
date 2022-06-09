@@ -19,5 +19,6 @@ public class UserIncludeSpecification : BaseSpecification<User>
         AddInclude(u => u.Playlists);
         AddInclude("Products.ProductType");
         ApplyPaging(userParams.PageSize * (userParams.PageIndex - 1), userParams.PageSize);
+        AddOrderByDescending(u => u.Tracks.Sum(t => t.Plays));
     }
 }

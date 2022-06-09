@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using gspark.Domain.Identity;
+﻿using gspark.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace gspark.Domain.Models
@@ -18,6 +15,7 @@ namespace gspark.Domain.Models
 
 
         public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<Track> Tracks { get; set; }
         public virtual ICollection<File> Files { get; set; }
         public virtual ICollection<Leasing> Leasings { get; set; }
         public virtual ICollection<Playlist> Playlists { get; set; }

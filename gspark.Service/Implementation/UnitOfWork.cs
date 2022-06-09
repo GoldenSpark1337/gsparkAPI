@@ -36,7 +36,7 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IUserRepository UserRepository => new UserService(_dbContext, _mapper);
-    public ITrackRepository TrackRepository { get; }
+    public ITrackRepository TrackRepository => new TrackRepository(_dbContext);
     public IMessageRepository MessageRepository => new MessageRepository(_dbContext, _mapper);
     public ILikesRepository LikesRepository => new LikeRepository(_dbContext);
 

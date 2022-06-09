@@ -15,6 +15,7 @@ public class ApiResponse
         {
             400 => "Bad request",
             401 => "You are not authorized",
+            403 => "You don't have permission",
             404 => "Resource not found",
             500 => "Internal server error",
             _ => null

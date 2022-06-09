@@ -112,7 +112,13 @@ namespace gspark.Controllers
             var tracks = await _unitOfWork.UserRepository.GetUserTracks(username, isDraft);
             return Ok(tracks);
         }
-        
+
+        [HttpGet("{username}/plays")]
+        public async Task<ActionResult<int>> GetUserPlays(string username)
+        {
+            return Ok(await _unitOfWork.TrackRepository.CountPlays(username));
+        } 
+
         [HttpGet("{username}/products")]
         public async Task<ActionResult<IReadOnlyList<DtoReturnProduct>>> GetUserProducts(string username, bool isDraft = false)
         {

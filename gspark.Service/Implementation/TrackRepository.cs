@@ -22,6 +22,14 @@ public class TrackRepository: ITrackRepository
         return track.Id;
     }
 
+    public async Task<int> CountPlays(string username)
+    {
+        return await _context.Tracks
+            .Include(t => t.User)
+            .Where(t => t.User.UserName == username)
+            .SumAsync(t => t.Plays);
+    }
+    
     public async Task DeleteTrack(int id)
     {
         var entity = await _context.Tracks.FindAsync(id);

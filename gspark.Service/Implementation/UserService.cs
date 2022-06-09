@@ -66,15 +66,21 @@ public class UserService: IUserRepository
         
         switch (period.ToLower())
         {
-            case "бүгін":
+            case "today":
                 dtoQuickStats.Likes = tracks
                     .Where(t => t.Likes.Any(l => l.CreatedAt.ToString("dd/MM/yyyy") == DateTime.Now.ToShortDateString()))
                     .Sum(t => t.Likes.Count);
                 dtoQuickStats.Plays = tracks.Sum(t => t.Plays);
                 break;
-            case "соңғы 30 күн":
+            case "last 30 days":
                 dtoQuickStats.Likes = tracks
                     .Where(t => t.Likes.Any(l => l.CreatedAt == DateTime.Now.AddMonths(-1)))
+                    .Sum(t => t.Likes.Count);
+                dtoQuickStats.Plays = tracks.Sum(t => t.Plays);
+                break;
+            case "last 90 days":
+                dtoQuickStats.Likes = tracks
+                    .Where(t => t.Likes.Any(l => l.CreatedAt == DateTime.Now.AddMonths(-3)))
                     .Sum(t => t.Likes.Count);
                 dtoQuickStats.Plays = tracks.Sum(t => t.Plays);
                 break;
